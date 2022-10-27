@@ -18,7 +18,7 @@ class UploadRequest {
   //unsigned int
   int size = 0;
   //array of bytes
-  Uint8List data = Uint8List(0);
+  String data = '';
   UploadRequest({
     required this.name,
     required this.type,
