@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import './ml/process.dart';
 
 void main() {
+  initModel();
   runApp(const MyApp());
 }
 
