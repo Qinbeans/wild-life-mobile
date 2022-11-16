@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import './ml/process.dart';
 
 void main() {
-  initModel();
+  WidgetsFlutterBinding.ensureInitialized();
+  classifier = Classifier('models/beta.tflite', 'assets/models/labels.txt');
+  classifier!.load();
   runApp(const MyApp());
 }
 
