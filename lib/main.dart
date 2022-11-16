@@ -36,20 +36,55 @@ class _MyHomePageState extends State<MyHomePage> {
       home: Scaffold(
           backgroundColor: const Color.fromARGB(255, 37, 37, 37),
           appBar: AppBar(
-            backgroundColor: const Color.fromARGB(255, 37, 37, 37),
-            centerTitle: true,
-            actions: [
-              IconButton(
-                icon: const FaIcon(FontAwesomeIcons.leaf),
-                color: Colors.green,
-                onPressed: () {},
+              backgroundColor: const Color.fromARGB(255, 37, 37, 37),
+              //leadingWidth: 20,
+              centerTitle: true,
+              //title: const Text('Wildlife'),
+              title: Container(
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      FaIcon(FontAwesomeIcons.leaf, color: Colors.green),
+                      Text(" Wildlife"),
+                    ]),
+              )
+              //titleTextStyle: TextStyle(fontSize: 30),
               ),
-            ],
-            title: const Text('Wildlife'),
-          ),
+
+          //BODY ---------------------
           body: Container(
-              child: Column(
-                  children: [ElevatedButton(onPressed: null, child: null)]))),
+            padding: const EdgeInsets.all(20),
+            child: Row(children: [
+              Column(
+                children: const [
+                  Text("New Upload",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                      )),
+                  ElevatedButton(
+                      onPressed: null,
+                      child: Icon(
+                        FontAwesomeIcons.camera,
+                        color: Colors.white,
+                      )),
+                ],
+              ),
+              Column(
+                children: [
+                  ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                      ),
+                      onPressed: null,
+                      icon: const Icon(FontAwesomeIcons.image,
+                          color: Colors.white),
+                      label: const Text("Upload",
+                          style: TextStyle(color: Colors.white)))
+                ],
+              )
+            ]),
+          )),
     );
   }
 }
