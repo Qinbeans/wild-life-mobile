@@ -1,9 +1,19 @@
 import 'package:flutter/material.dart';
 import './ml/process.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import './util.dart';
 
 void main() {
-  //initModel();
+  WidgetsFlutterBinding.ensureInitialized();
+  //check for internet connection
+  hasInternet().then((bool hasInternet) {
+    if (!hasInternet) {
+      classifier = Classifier('models/beta.tflite', 'assets/models/labels.txt');
+      classifier!.load();
+    }
+  }).catchError((_) {
+    classifier = Classifier('models/beta.tflite', 'assets/models/labels.txt');
+    classifier!.load();
+  });
   runApp(const MyApp());
 }
 
