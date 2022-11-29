@@ -74,8 +74,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 children: [
                   ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                      ),
+                          //backgroundColor: Colors.green,
+                          ),
                       onPressed: null,
                       icon: const Icon(FontAwesomeIcons.image,
                           color: Colors.white),
