@@ -34,6 +34,13 @@ class Classifier {
     _outputTypes = [];
     _labels = [];
   }
+
+  void dispose() {
+    if (_model != null) {
+      _model!.close();
+    }
+  }
+
   void _loadModel() async {
     if (_model != null) return;
     _model = await Interpreter.fromAsset(_modelPath,
