@@ -144,7 +144,11 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-<<<<<<< HEAD
+  flutter_web_plugins:
+    dependency: transitive
+    description: flutter
+    source: sdk
+    version: "0.0.0"
   font_awesome_flutter:
     dependency: "direct main"
     description:
@@ -152,12 +156,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "10.2.1"
-=======
-  flutter_web_plugins:
-    dependency: transitive
-    description: flutter
-    source: sdk
-    version: "0.0.0"
   http:
     dependency: transitive
     description:
@@ -221,7 +219,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.6.4"
->>>>>>> 6974cb020b91cd75ef2a513c0c2aa811c2d0675d
   lints:
     dependency: transitive
     description:
@@ -333,7 +330,7 @@ packages:
       name: petitparser
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "5.1.0"
+    version: "5.0.0"
   platform:
     dependency: transitive
     description:
@@ -473,9 +470,5 @@ packages:
     source: hosted
     version: "6.1.0"
 sdks:
-<<<<<<< HEAD
   dart: ">=2.17.2 <3.0.0"
-=======
-  dart: ">=2.18.2 <3.0.0"
   flutter: ">=2.10.0"
->>>>>>> 6974cb020b91cd75ef2a513c0c2aa811c2d0675d

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import './ml/process.dart';
 import './util.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+// 	override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray): Boolean {
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -62,26 +64,28 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
 
           //BODY ---------------------
-          body: Container(
-            padding: const EdgeInsets.all(20),
-            child: Row(children: [
-              Column(
-                children: const [
+          body: Column(
+            children: <Widget>[
+              const SizedBox(height: 20),
+              Row(
+                children: const <Widget>[
                   Text("New Upload",
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 20,
-                      )),
-                  ElevatedButton(
+                      ))
+                ],
+              ),
+              const SizedBox(height: 2),
+              Row(
+                //mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  const ElevatedButton(
                       onPressed: null,
                       child: Icon(
                         FontAwesomeIcons.camera,
                         color: Colors.white,
                       )),
-                ],
-              ),
-              Column(
-                children: [
                   ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(
                           //backgroundColor: Colors.green,
@@ -92,9 +96,44 @@ class _MyHomePageState extends State<MyHomePage> {
                       label: const Text("Upload",
                           style: TextStyle(color: Colors.white)))
                 ],
-              )
-            ]),
-          )),
+              ),
+            ],
+          )
+
+          // Container(
+          //   padding: const EdgeInsets.all(20),
+          //   child: Row(children: [
+          //     Column(
+          //       children: const [
+          //         Text("New Upload",
+          //             style: TextStyle(
+          //               color: Colors.white,
+          //               fontSize: 20,
+          //             )),
+          //         ElevatedButton(
+          //             onPressed: null,
+          //             child: Icon(
+          //               FontAwesomeIcons.camera,
+          //               color: Colors.white,
+          //             )),
+          //       ],
+          //     ),
+          //     Column(
+          //       children: [
+          //         ElevatedButton.icon(
+          //             style: ElevatedButton.styleFrom(
+          //                 //backgroundColor: Colors.green,
+          //                 ),
+          //             onPressed: null,
+          //             icon: const Icon(FontAwesomeIcons.image,
+          //                 color: Colors.white),
+          //             label: const Text("Upload",
+          //                 style: TextStyle(color: Colors.white)))
+          //       ],
+          //     )
+          //   ]),
+          // )
+          ),
     );
   }
 }
