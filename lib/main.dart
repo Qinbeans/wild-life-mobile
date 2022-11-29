@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import './ml/process.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+// 	override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray): Boolean {
 
 void main() {
-  //initModel();
+  WidgetsFlutterBinding.ensureInitialized();
+  classifier = Classifier('models/beta.tflite', 'assets/models/labels.txt');
+  classifier!.load();
   runApp(const MyApp());
 }
 

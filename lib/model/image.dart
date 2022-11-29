@@ -1,5 +1,3 @@
-import 'package:flutter/foundation.dart';
-
 class GPS {
   final double latitude;
   final double longitude;
@@ -18,7 +16,7 @@ class UploadRequest {
   //unsigned int
   int size = 0;
   //array of bytes
-  Uint8List data = Uint8List(0);
+  String data = '';
   UploadRequest({
     required this.name,
     required this.type,
