@@ -27,14 +27,15 @@ class mapPageState extends State<mapPage> {
             appBar: AppBar(
               backgroundColor: const Color.fromARGB(255, 37, 37, 37),
               //leadingWidth: 20,
-              centerTitle: true,
-              //title: const Text('Wildlife'),
-              title: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    FaIcon(FontAwesomeIcons.map, color: Colors.green),
-                    Text(" Map"),
-                  ]),
+              //centerTitle: true,
+              //title: const Text('Wildlife'),+
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              title: const Text("Map"),
               //titleTextStyle: TextStyle(fontSize: 30),
             ),
             //////////Body//////////

@@ -222,12 +222,24 @@ class MLPageState extends State<MLPage> {
                                     const Color.fromARGB(255, 58, 58, 58))))),
                   ],
                 ),
-                Row(children: const [
-                  Text("Previous Uploads",
+                Row(children: [
+                  Column(),
+                  const Text("Previous Uploads",
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 20,
                       )),
+                  // const Padding(padding: EdgeInsets.all(20)),
+                  TextButton(
+                      style: TextButton.styleFrom(
+                        textStyle: const TextStyle(fontSize: 20),
+                      ),
+                      onPressed: null,
+                      child: const Text("Clear",
+                          style: TextStyle(
+                            color: Colors.green,
+                            fontSize: 16,
+                          ))),
                 ]),
               ]),
             )));
