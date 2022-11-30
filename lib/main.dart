@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:wild_life_mobile/ml/view.dart';
 import 'package:wild_life_mobile/util.dart';
 import './ml/process.dart';
-// 	override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray): Boolean {
 
-void main() {
+// 	override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray): Boolean {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   //check for internet connection
   hasInternet().then((bool hasInternet) {
