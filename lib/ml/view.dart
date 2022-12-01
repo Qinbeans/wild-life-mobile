@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 
 import '../model/image.dart';
 import '../map/view.dart';
+import '../ml/results.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:location/location.dart';
@@ -243,97 +244,8 @@ class MLPageState extends State<MLPage> {
                             fontSize: 16,
                           ))),
                 ]),
-                //FOR PREVIOUS UPLOADS
-                Row(
-                  children: [
-                    Flexible(
-                        //Box for the image (TEMPORARY MOVE TO ANOTHE FILE)
-                        child: Container(
-                      height: 120,
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: const Color.fromARGB(255, 58, 58, 58),
-                      ),
-                      child: Row(
-                        children: [
-                          //Image
-                          Container(
-                            height: 100,
-                            width: 120,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: const Color.fromARGB(255, 58, 58, 58),
-                            ),
-                            child: const Icon(
-                              FontAwesomeIcons.image,
-                              color: Colors.white,
-                            ),
-                          ),
-                          const Padding(padding: EdgeInsets.all(10)),
-                          //Text
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text("Image Name",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 15,
-                                  )),
-                              const Padding(padding: EdgeInsets.all(3)),
-                              RichText(
-                                  text: const TextSpan(children: [
-                                WidgetSpan(
-                                    child: FaIcon(FontAwesomeIcons.check,
-                                        size: 15, color: Colors.green)),
-                                TextSpan(
-                                    text: " Location",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 15,
-                                    )),
-                              ])),
-                              const Padding(padding: EdgeInsets.all(3)),
-                              RichText(
-                                  text: const TextSpan(children: [
-                                WidgetSpan(
-                                    child: FaIcon(
-                                        FontAwesomeIcons.magnifyingGlass,
-                                        size: 15,
-                                        color: Colors.white)),
-                                TextSpan(
-                                    text: " Species",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 15,
-                                    )),
-                              ])),
-                              const Padding(padding: EdgeInsets.all(3)),
-                              const Text("Confidence",
-                                  style: TextStyle(
-                                    color: Color.fromARGB(255, 175, 173, 173),
-                                    fontSize: 15,
-                                  )),
-                            ],
-                          ),
-                        ],
-
-                        //Column(
-                        //   children: const [
-                        //     FaIcon(FontAwesomeIcons.leaf, color: Colors.green),
-                        //     Padding(padding: EdgeInsets.all(10)),
-                        //     Text("Upload 1",
-                        //         style: TextStyle(
-                        //           color: Colors.white,
-                        //           fontSize: 20,
-                        //         )),
-                        //   ],
-                        // ),
-                      ),
-                    ))
-                  ],
-                ),
+                UploadResultState(),
+                UploadResultState(),
               ]),
             )));
   }
