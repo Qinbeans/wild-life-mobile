@@ -6,7 +6,7 @@
 import 'dart:ui';
 
 import 'package:flutter/services.dart';
-import 'dart:io';
+
 import '../model/image.dart';
 import '../map/view.dart';
 import '../ml/results.dart';
@@ -15,11 +15,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:location/location.dart';
 import 'dart:convert';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import './process.dart';
+import '../main.dart';
 
 var isConnected = false;
-
-var history = [];
 
 class MLPage extends StatefulWidget {
   const MLPage({Key? key}) : super(key: key);
@@ -51,54 +49,6 @@ class MLPageState extends State<MLPage> {
     setState((() {
       _checkLocationPermission();
     }));
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-        home: Scaffold(
-            backgroundColor: const Color.fromARGB(255, 37, 37, 37),
-            appBar: AppBar(
-                backgroundColor: const Color.fromARGB(255, 37, 37, 37),
-                //leadingWidth: 20,
-                centerTitle: true,
-                //title: const Text('Wildlife'),
-                title: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      FaIcon(FontAwesomeIcons.leaf, color: Colors.green),
-                      Text(" Wildlife"),
-                    ])
-                //titleTextStyle: TextStyle(fontSize: 30),
-                ),
-            body: Container(
-              padding: const EdgeInsets.all(20),
-              child: Column(children: [
-                Row(children: const [
-                  Text("New Upload",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                      )),
-                ]),
-                Row(
-                  children: [
-                    ElevatedButton(
-                        onPressed: _captureImage,
-                        child: const Icon(
-                          FontAwesomeIcons.camera,
-                          color: Colors.white,
-                        )),
-                    ElevatedButton.icon(
-                        onPressed: _pickfile,
-                        icon: const Icon(FontAwesomeIcons.image,
-                            color: Colors.white),
-                        label: const Text("Upload",
-                            style: TextStyle(color: Colors.white))),
-                  ],
-                )
-              ]),
-            )));
   }
 
   void _getLocation() async {
@@ -194,26 +144,100 @@ class MLPageState extends State<MLPage> {
     if (isConnected) {
       //send upload request to server
     } else {
-      if (classifier == null) {
-        return;
-      }
-      final res = await classifier!.processImage(File(image.path));
-      var average = 0.0;
-      var sum = 0.0;
-      for (var i = 0; i < res.length; i++) {
-        sum += res[i].confidence;
-      }
-      average = sum / res.length;
-      //trigger modal to display results
-
-      /**
-       * David do something here lol
-       */
-
-      //push history with basic upload response
-      history.add(
-        Results(data: image.path, confidence: average, local: true),
-      );
+      //send upload request to local model
     }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+        home: Scaffold(
+            backgroundColor: const Color.fromARGB(255, 37, 37, 37),
+            appBar: AppBar(
+              backgroundColor: const Color.fromARGB(255, 37, 37, 37),
+              //leadingWidth: 20,
+              centerTitle: true,
+              //title: const Text('Wildlife'),
+              title: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    FaIcon(FontAwesomeIcons.leaf, color: Colors.green),
+                    Text(" Wildlife"),
+                  ]),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.map),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const mapPage()),
+                    );
+                  },
+                ),
+              ],
+            ),
+            //titleTextStyle: TextStyle(fontSize: 30),
+            //////////Body//////////
+            body: Container(
+              padding: const EdgeInsets.all(20), //padding for the whole page
+              child: Column(children: [
+                Row(children: const [
+                  Text("New Upload",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                      )),
+                ]),
+                Row(
+                  children: [
+                    Expanded(
+                        child: ElevatedButton(
+                      onPressed: _captureImage,
+                      style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              const Color.fromARGB(255, 58, 58, 58))),
+                      child: const Icon(
+                        FontAwesomeIcons.camera,
+                        color: Colors.white,
+                      ),
+                    )),
+                    const Padding(padding: EdgeInsets.all(10)),
+                    //Makes button fill row
+                    Expanded(
+                        child: ElevatedButton.icon(
+                            onPressed: _pickfile,
+                            icon: const Icon(FontAwesomeIcons.image,
+                                color: Colors.white),
+                            label: const Text("Upload",
+                                style: TextStyle(color: Colors.white)),
+                            style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all<
+                                        Color>(
+                                    const Color.fromARGB(255, 58, 58, 58))))),
+                  ],
+                ),
+                Row(children: [
+                  Column(),
+                  const Text("Previous Uploads",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                      )),
+                  // const Padding(padding: EdgeInsets.all(20)),
+                  TextButton(
+                      style: TextButton.styleFrom(
+                        textStyle: const TextStyle(fontSize: 20),
+                      ),
+                      onPressed: null,
+                      child: const Text("Clear",
+                          style: TextStyle(
+                            color: Colors.green,
+                            fontSize: 16,
+                          ))),
+                ]),
+                UploadResultState(),
+                UploadResultState(),
+              ]),
+            )));
   }
 }
