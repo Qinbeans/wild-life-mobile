@@ -10,6 +10,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:camera/camera.dart';
 import '../main.dart';
 
+//Just need confidence and image path. Look at results object in image.dart
+
 class UploadResultState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
