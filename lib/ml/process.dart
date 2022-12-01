@@ -1,10 +1,10 @@
 //processes incoming images
-import 'package:tflite_flutter/tflite_flutter.dart';
 import 'dart:io';
-import 'package:tflite_flutter_helper/tflite_flutter_helper.dart';
-import 'package:wild_life_mobile/ml/detection.dart';
 import 'dart:math';
 import 'dart:ui';
+import 'package:tflite_flutter_helper/tflite_flutter_helper.dart';
+import 'package:wild_life_mobile/ml/detection.dart';
+import 'package:tflite_flutter/tflite_flutter.dart';
 
 Classifier? classifier;
 

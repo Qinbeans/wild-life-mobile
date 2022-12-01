@@ -1,8 +1,8 @@
-import '../model/image.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart';
+import 'package:wild_life_mobile/model/image.dart';
 
 //writes a list of objects into a json file
 void writeJson(List<Results> list) async {
@@ -17,7 +17,11 @@ void writeJson(List<Results> list) async {
 Future<List<Results>> readJson() async {
   final directory = await getApplicationDocumentsDirectory();
   final file = File(join(directory.path, 'results.json'));
-  final json = file.readAsStringSync();
-  final list = jsonDecode(json);
-  return list;
+  //check if file exists
+  if (await file.exists()) {
+    final json = file.readAsStringSync();
+    final list = jsonDecode(json);
+    return list;
+  }
+  return [];
 }

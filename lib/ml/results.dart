@@ -1,18 +1,15 @@
 // ignore_for_file: camel_case_types
-
-import 'package:flutter/services.dart';
-import '../model/image.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:location/location.dart';
-import 'dart:convert';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:camera/camera.dart';
-import '../main.dart';
 
 //Just need confidence and image path. Look at results object in image.dart
-
 class UploadResultState extends StatelessWidget {
+  final double confidence;
+  final String imageName;
+
+  const UploadResultState(
+      {Key? key, required this.confidence, required this.imageName})
+      : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -47,40 +44,42 @@ class UploadResultState extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text("Image Name",
-                      style: TextStyle(
+                  Text(imageName,
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 15,
                       )),
                   const Padding(padding: EdgeInsets.all(3)),
                   RichText(
-                      text: const TextSpan(children: [
-                    WidgetSpan(
+                      text: TextSpan(children: [
+                    const WidgetSpan(
                         child: FaIcon(FontAwesomeIcons.check,
                             size: 15, color: Colors.green)),
                     TextSpan(
-                        text: " Location",
-                        style: TextStyle(
+                        text: (confidence > 0.5)
+                            ? "  Irritants Detected"
+                            : "  No Irritants",
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 15,
                         )),
                   ])),
                   const Padding(padding: EdgeInsets.all(3)),
                   RichText(
-                      text: const TextSpan(children: [
-                    WidgetSpan(
+                      text: TextSpan(children: [
+                    const WidgetSpan(
                         child: FaIcon(FontAwesomeIcons.magnifyingGlass,
                             size: 15, color: Colors.white)),
                     TextSpan(
-                        text: " Species",
-                        style: TextStyle(
+                        text: (confidence > 0.5) ? "  Poison Oak" : "  na",
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 15,
                         )),
                   ])),
                   const Padding(padding: EdgeInsets.all(3)),
-                  const Text("Confidence",
-                      style: TextStyle(
+                  Text("$confidence%  Confidence",
+                      style: const TextStyle(
                         color: Color.fromARGB(255, 175, 173, 173),
                         fontSize: 15,
                       )),

@@ -1,24 +1,14 @@
-// ignore_for_file: camel_case_types
-
-import 'package:flutter/services.dart';
-import '../model/image.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:location/location.dart';
-import 'dart:convert';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:camera/camera.dart';
-import '../main.dart';
 
 //Dispaly map and relevant map data
-class mapPage extends StatefulWidget {
-  const mapPage({Key? key}) : super(key: key);
+class MapPage extends StatefulWidget {
+  const MapPage({Key? key}) : super(key: key);
 
   @override
-  mapPageState createState() => mapPageState();
+  MapPageState createState() => MapPageState();
 }
 
-class mapPageState extends State<mapPage> {
+class MapPageState extends State<MapPage> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
