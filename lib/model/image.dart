@@ -47,3 +47,14 @@ class UploadResponse {
     this.data,
   });
 }
+
+class Results {
+  String data = '';
+  double confidence = 0.0;
+  bool local = false;
+  Results({
+    required this.data,
+    required this.confidence,
+    required this.local,
+  });
+}
