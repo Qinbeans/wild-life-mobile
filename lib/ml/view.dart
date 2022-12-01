@@ -2,20 +2,16 @@
 //Find out whether there is network connection.
 //If there is no network connection, use the local model.
 
-//take in an image
-import 'dart:ui';
-
 import 'package:flutter/services.dart';
-
 import '../model/image.dart';
 import '../map/view.dart';
 import '../ml/results.dart';
+import '../ml/modal.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:location/location.dart';
 import 'dart:convert';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../main.dart';
 
 var isConnected = false;
 
@@ -170,7 +166,8 @@ class MLPageState extends State<MLPage> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const mapPage()),
+                      // MaterialPageRoute(builder: (context) => const mapPage()),
+                      MaterialPageRoute(builder: (context) => const modal()),
                     );
                   },
                 ),

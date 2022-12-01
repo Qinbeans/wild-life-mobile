@@ -47,11 +47,11 @@ class UploadResultState extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text("Image Name",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 15,
-                      )),
+                  // const Text("Image Name", //Removed for Ryans request
+                  //     style: TextStyle(
+                  //       color: Colors.white,
+                  //       fontSize: 15,
+                  //     )),
                   const Padding(padding: EdgeInsets.all(3)),
                   RichText(
                       text: const TextSpan(children: [
@@ -59,7 +59,7 @@ class UploadResultState extends StatelessWidget {
                         child: FaIcon(FontAwesomeIcons.check,
                             size: 15, color: Colors.green)),
                     TextSpan(
-                        text: " Location",
+                        text: " Iritants",
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 15,
