@@ -2,18 +2,26 @@
 //Find out whether there is network connection.
 //If there is no network connection, use the local model.
 
+//take in an image
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:path/path.dart';
 import 'package:flutter/services.dart';
-import '../model/image.dart';
-import '../map/view.dart';
-import '../ml/results.dart';
-import '../ml/modal.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:location/location.dart';
-import 'dart:convert';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:wild_life_mobile/model/image.dart';
+import 'package:wild_life_mobile/map/view.dart';
+import 'package:wild_life_mobile/ml/results.dart';
+import 'package:wild_life_mobile/ml/io.dart';
 
 var isConnected = false;
+
+var history = <Results>[];
+
+var widgetList = <Widget>[];
 
 class MLPage extends StatefulWidget {
   const MLPage({Key? key}) : super(key: key);
@@ -34,6 +42,35 @@ class MLPageState extends State<MLPage> {
   void initState() {
     super.initState();
     _checkLocationPermission();
+    String imageName;
+    widgetList = [
+      Column(),
+      const Text("Previous Uploads",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+          )),
+      // const Padding(padding: EdgeInsets.all(20)),
+      TextButton(
+          style: TextButton.styleFrom(
+            textStyle: const TextStyle(fontSize: 20),
+          ),
+          onPressed: null,
+          child: const Text("Clear",
+              style: TextStyle(
+                color: Colors.green,
+                fontSize: 16,
+              ))),
+    ];
+    readJson().then((value) => {
+          for (var i = 0; i < history.length; i++)
+            {
+              //grab the image from the path
+              imageName = basename(File(history[i].data).path),
+              widgetList.add(UploadResultState(
+                  confidence: history[i].confidence, imageName: imageName)),
+            }
+        });
   }
 
   @override
@@ -166,8 +203,7 @@ class MLPageState extends State<MLPage> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      // MaterialPageRoute(builder: (context) => const mapPage()),
-                      MaterialPageRoute(builder: (context) => const modal()),
+                      MaterialPageRoute(builder: (context) => const MapPage()),
                     );
                   },
                 ),
@@ -213,27 +249,7 @@ class MLPageState extends State<MLPage> {
                                     const Color.fromARGB(255, 58, 58, 58))))),
                   ],
                 ),
-                Row(children: [
-                  Column(),
-                  const Text("Previous Uploads",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                      )),
-                  // const Padding(padding: EdgeInsets.all(20)),
-                  TextButton(
-                      style: TextButton.styleFrom(
-                        textStyle: const TextStyle(fontSize: 20),
-                      ),
-                      onPressed: null,
-                      child: const Text("Clear",
-                          style: TextStyle(
-                            color: Colors.green,
-                            fontSize: 16,
-                          ))),
-                ]),
-                UploadResultState(),
-                UploadResultState(),
+                Row(children: widgetList),
               ]),
             )));
   }

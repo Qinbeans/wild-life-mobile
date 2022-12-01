@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wild_life_mobile/ml/view.dart';
 import 'package:wild_life_mobile/util.dart';
-import './ml/process.dart';
+import 'package:wild_life_mobile/ml/process.dart';
 
 // 	override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray): Boolean {
 Future<void> main() async {

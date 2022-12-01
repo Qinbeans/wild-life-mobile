@@ -57,4 +57,18 @@ class Results {
     required this.confidence,
     required this.local,
   });
+
+  Results fromJson(Map<String, dynamic> json) {
+    return Results(
+      data: json['data'],
+      confidence: json['confidence'],
+      local: json['local'],
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'data': data,
+        'confidence': confidence,
+        'local': local,
+      };
 }
