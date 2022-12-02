@@ -28,54 +28,147 @@ class modalState extends State<modal> {
               title: const Text("Results"),
               //titleTextStyle: TextStyle(fontSize: 30),
             ),
-            //////////Body//////////
-            body: Row(
-              children: [
-                Flexible(
-                    //Box for the image (TEMPORARY MOVE TO ANOTHE FILE)
-                    child: Container(
-                  height: 100,
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: const Color.fromARGB(255, 58, 58, 58),
-                  ),
-                  child: Row(
-                    children: [
-                      //Image
-                      Container(
-                        height: 100,
-                        width: 120,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: const Color.fromARGB(255, 58, 58, 58),
-                        ),
-                        child: const Icon(
-                          FontAwesomeIcons.image,
-                          color: Colors.white,
-                        ),
+            //////////Body/////////
+            body: Container(
+                padding: const EdgeInsets.all(10), //padding for the whole page
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Flexible(
+                        //Box for the image (TEMPORARY MOVE TO ANOTHE FILE)
+                        child: Container(
+                      height: 100,
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: const Color.fromARGB(255, 58, 58, 58),
                       ),
-                      const Padding(padding: EdgeInsets.all(10)),
-                      //Text
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [],
+                      child: Row(
+                        children: const [
+                          //Image
+                          // Padding(padding: EdgeInsets.all(10)),
+                          //Text
+                        ],
                       ),
-                    ],
-                  ),
-                )),
-                Flexible(
-                    child: Container(
-                        height: 100,
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: const Color.fromARGB(255, 58, 58, 58),
-                        ),
-                        child: const Text("Poison Oak")))
-              ],
-            )));
+                    )),
+                    const Padding(padding: EdgeInsets.all(5)),
+                    const Text(
+                      "Detections",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                      ),
+                    ),
+                    const Padding(padding: EdgeInsets.all(5)),
+                    //MAKE THIS LIST
+                    Flexible(
+                        child: Container(
+                            height: 40,
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: const Color.fromARGB(255, 58, 58, 58),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: const [
+                                Text("Plant Name",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 18,
+                                    )),
+                                Padding(padding: EdgeInsets.all(10)),
+                                Text("10.2%",
+                                    textDirection: TextDirection.rtl,
+                                    style: TextStyle(
+                                      color: Color.fromARGB(255, 145, 142, 142),
+                                      fontSize: 18,
+                                    )),
+                              ],
+                            ))),
+                    //MAKE THIS LIST
+                    const Padding(padding: EdgeInsets.all(5)),
+                    const Text(
+                      "Upload",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                      ),
+                    ),
+                    const Padding(padding: EdgeInsets.all(5)),
+                    Container(
+                      height: 100,
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: const Color.fromARGB(255, 58, 58, 58),
+                      ),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: const [
+                              Text(
+                                "name",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                ),
+                              ),
+                              Text(
+                                "image.png",
+                                style: TextStyle(
+                                  color: Color.fromARGB(255, 145, 142, 142),
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: const [
+                              Text(
+                                "type",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                ),
+                              ),
+                              Text(
+                                "image/png",
+                                style: TextStyle(
+                                  color: Color.fromARGB(255, 145, 142, 142),
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: const [
+                              Text(
+                                "size",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                ),
+                              ),
+                              Text(
+                                "x.xx MB",
+                                style: TextStyle(
+                                  color: Color.fromARGB(255, 145, 142, 142),
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    )
+                  ],
+                ))));
   }
 }
