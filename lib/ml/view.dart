@@ -5,7 +5,6 @@
 //take in an image
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:path/path.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
@@ -204,7 +203,7 @@ class MLPageState extends State<MLPage> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const modal()),
+                      MaterialPageRoute(builder: (context) => const MapPage()),
                     );
                   },
                 ),
