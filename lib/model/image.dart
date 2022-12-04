@@ -47,3 +47,28 @@ class UploadResponse {
     this.data,
   });
 }
+
+class Results {
+  String data = ''; //if local, this will be a path
+  double confidence = 0.0;
+  bool local = false;
+  Results({
+    required this.data,
+    required this.confidence,
+    required this.local,
+  });
+
+  Results fromJson(Map<String, dynamic> json) {
+    return Results(
+      data: json['data'],
+      confidence: json['confidence'],
+      local: json['local'],
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'data': data,
+        'confidence': confidence,
+        'local': local,
+      };
+}
