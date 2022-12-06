@@ -1,3 +1,5 @@
+import 'package:wild_life_mobile/ml/detection.dart';
+
 class GPS {
   final double latitude;
   final double longitude;
@@ -46,6 +48,38 @@ class UploadResponse {
     required this.message,
     this.data,
   });
+}
+
+class FullResult {
+  String data = '';
+  List<Detection> detections = [];
+  bool local = false;
+  FullResult({
+    required this.data,
+    required this.detections,
+    required this.local,
+  });
+  Results? toResults() {
+    //find the highest confidence detection
+    Detection? detection;
+    for (var d in detections) {
+      if (detection == null) {
+        detection = d;
+      } else {
+        if (d.confidence > detection.confidence) {
+          detection = d;
+        }
+      }
+    }
+    if (detection == null) {
+      return null;
+    }
+    return Results(
+      data: data,
+      confidence: detection.confidence,
+      local: local,
+    );
+  }
 }
 
 class Results {
