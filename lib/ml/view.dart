@@ -13,6 +13,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:location/location.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:wild_life_mobile/ml/modal.dart';
+import 'package:wild_life_mobile/ml/process.dart';
 import 'package:wild_life_mobile/model/image.dart';
 import 'package:wild_life_mobile/map/view.dart';
 import 'package:wild_life_mobile/ml/results.dart';
@@ -114,13 +115,13 @@ class MLPageState extends State<MLPage> {
     _getLocation();
   }
 
-  void _captureImage() async {
+  Future<FullResult?> _captureImage() async {
     _refreshLocation(); //update location
     final imagePicker = ImagePicker();
     final XFile? image =
         await imagePicker.pickImage(source: ImageSource.camera);
     if (image == null) {
-      return;
+      return null;
     }
     //convert image to bytes
     final bytes = await image.readAsBytes();
@@ -143,18 +144,21 @@ class MLPageState extends State<MLPage> {
     //for now don't send the request and process locally
     if (isConnected) {
       //send upload request to server
-    } else {
-      //send upload request to local model
     }
+    File file = File(image.path);
+    final response = await classifier!.processImage(file);
+    final fullres =
+        FullResult(data: image.path, detections: response, local: true);
+    return fullres;
   }
 
-  void _pickfile() async {
+  Future<FullResult?> _pickfile() async {
     _refreshLocation(); //update location
     final imagePicker = ImagePicker();
     final XFile? image =
         await imagePicker.pickImage(source: ImageSource.gallery);
     if (image == null) {
-      return;
+      return null;
     }
     //convert image to bytes
     final bytes = await image.readAsBytes();
@@ -177,9 +181,12 @@ class MLPageState extends State<MLPage> {
     //for now don't send the request and process locally
     if (isConnected) {
       //send upload request to server
-    } else {
-      //send upload request to local model
     }
+    File file = File(image.path);
+    final response = await classifier!.processImage(file);
+    final fullres =
+        FullResult(data: image.path, detections: response, local: true);
+    return fullres;
   }
 
   @override
@@ -202,10 +209,7 @@ class MLPageState extends State<MLPage> {
                 IconButton(
                   icon: const Icon(Icons.map),
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const modal()),
-                    );
+                    //
                   },
                 ),
               ],
@@ -226,7 +230,17 @@ class MLPageState extends State<MLPage> {
                   children: [
                     Expanded(
                         child: ElevatedButton(
-                      onPressed: _captureImage,
+                      onPressed: () {
+                        _captureImage().then((value) {
+                          if (value != null) {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        modal(result: value)));
+                          }
+                        });
+                      },
                       style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all<Color>(
                               const Color.fromARGB(255, 58, 58, 58))),
@@ -239,7 +253,17 @@ class MLPageState extends State<MLPage> {
                     //Makes button fill row
                     Expanded(
                         child: ElevatedButton.icon(
-                            onPressed: _pickfile,
+                            onPressed: () {
+                              _pickfile().then((value) {
+                                if (value != null) {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              modal(result: value)));
+                                }
+                              });
+                            },
                             icon: const Icon(FontAwesomeIcons.image,
                                 color: Colors.white),
                             label: const Text("Upload",
