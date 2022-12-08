@@ -188,13 +188,18 @@ class MLPageState extends State<MLPage> {
 
     File file = File(image.path);
 
-    // List<Detection> response;
+    final List<Detection> response;
     // if (classifier != null) {
     //   response = await classifier!.processImage(file);
     // } else {
     //   response = [];
     // }
-    final response = await classifier!.processImage(file);
+
+    if (classifier != null) {
+      response = await classifier!.processImage(file);
+    } else {
+      response = [];
+    }
 
     final fullres =
         FullResult(data: image.path, detections: response, local: true);
