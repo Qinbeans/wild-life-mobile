@@ -2,16 +2,60 @@
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:wild_life_mobile/ml/detection.dart';
+import 'package:wild_life_mobile/model/image.dart';
 
 class modal extends StatefulWidget {
-  const modal({Key? key}) : super(key: key);
+  final FullResult result;
+  const modal({Key? key, required this.result}) : super(key: key);
 
   @override
   modalState createState() => modalState();
 }
 
 class modalState extends State<modal> {
-  var image;
+  String _path = '';
+  String _name = '';
+  List<Widget> detectionWidgets = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _path = widget.result.data;
+    _name = widget.result.getName();
+
+    for (var i = 0; i < widget.result.detections.length; i++) {
+      detectionWidgets.add(
+        Flexible(
+            child: Container(
+                height: 40,
+                width: double.infinity,
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: const Color.fromARGB(255, 58, 58, 58),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(widget.result.detections[i].label,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                        )),
+                    const Padding(padding: EdgeInsets.all(10)),
+                    Text(widget.result.detections[i].confidence.toString(),
+                        textDirection: TextDirection.rtl,
+                        style: const TextStyle(
+                          color: Color.fromARGB(255, 145, 142, 142),
+                          fontSize: 18,
+                        )),
+                  ],
+                ))),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -62,32 +106,9 @@ class modalState extends State<modal> {
                     ),
                     const Padding(padding: EdgeInsets.all(5)),
                     //MAKE THIS LIST
-                    Flexible(
-                        child: Container(
-                            height: 40,
-                            width: double.infinity,
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: const Color.fromARGB(255, 58, 58, 58),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: const [
-                                Text("Plant Name",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 18,
-                                    )),
-                                Padding(padding: EdgeInsets.all(10)),
-                                Text("10.2%",
-                                    textDirection: TextDirection.rtl,
-                                    style: TextStyle(
-                                      color: Color.fromARGB(255, 145, 142, 142),
-                                      fontSize: 18,
-                                    )),
-                              ],
-                            ))),
+                    Column(
+                      children: detectionWidgets,
+                    ),
                     //MAKE THIS LIST
                     const Padding(padding: EdgeInsets.all(5)),
                     const Text(
@@ -110,8 +131,8 @@ class modalState extends State<modal> {
                         children: [
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: const [
-                              Text(
+                            children: [
+                              const Text(
                                 "name",
                                 style: TextStyle(
                                   color: Colors.white,
@@ -119,46 +140,8 @@ class modalState extends State<modal> {
                                 ),
                               ),
                               Text(
-                                "image.png",
-                                style: TextStyle(
-                                  color: Color.fromARGB(255, 145, 142, 142),
-                                  fontSize: 18,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: const [
-                              Text(
-                                "type",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                ),
-                              ),
-                              Text(
-                                "image/png",
-                                style: TextStyle(
-                                  color: Color.fromARGB(255, 145, 142, 142),
-                                  fontSize: 18,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: const [
-                              Text(
-                                "size",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                ),
-                              ),
-                              Text(
-                                "x.xx MB",
-                                style: TextStyle(
+                                _name,
+                                style: const TextStyle(
                                   color: Color.fromARGB(255, 145, 142, 142),
                                   fontSize: 18,
                                 ),
