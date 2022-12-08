@@ -25,3 +25,12 @@ Future<List<Results>> readJson() async {
   }
   return [];
 }
+
+void deleteJson() async {
+  final directory = await getApplicationDocumentsDirectory();
+  final file = File(join(directory.path, 'results.json'));
+
+  if (await file.exists()) {
+    await file.delete();
+  }
+}

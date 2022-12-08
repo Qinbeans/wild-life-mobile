@@ -11,12 +11,14 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:location/location.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:wild_life_mobile/ml/detection.dart';
 import 'package:wild_life_mobile/ml/modal.dart';
 import 'package:wild_life_mobile/ml/process.dart';
 import 'package:wild_life_mobile/model/image.dart';
 import 'package:wild_life_mobile/map/view.dart';
 import 'package:wild_life_mobile/ml/results.dart';
 import 'package:wild_life_mobile/ml/io.dart';
+import 'dart:developer' as developer;
 
 var isConnected = false;
 
@@ -56,7 +58,7 @@ class MLPageState extends State<MLPage> {
           style: TextButton.styleFrom(
             textStyle: const TextStyle(fontSize: 20),
           ),
-          onPressed: null,
+          onPressed: (() => deleteJson()),
           child: const Text("Clear",
               style: TextStyle(
                 color: Colors.green,
@@ -148,11 +150,13 @@ class MLPageState extends State<MLPage> {
     final response = await classifier!.processImage(file);
     final fullres =
         FullResult(data: image.path, detections: response, local: true);
+
     return fullres;
   }
 
   Future<FullResult?> _pickfile() async {
     _refreshLocation(); //update location
+    developer.log("Pick File Accessed");
     final imagePicker = ImagePicker();
     final XFile? image =
         await imagePicker.pickImage(source: ImageSource.gallery);
@@ -181,10 +185,21 @@ class MLPageState extends State<MLPage> {
     if (isConnected) {
       //send upload request to server
     }
+
     File file = File(image.path);
+
+    // List<Detection> response;
+    // if (classifier != null) {
+    //   response = await classifier!.processImage(file);
+    // } else {
+    //   response = [];
+    // }
     final response = await classifier!.processImage(file);
+
     final fullres =
         FullResult(data: image.path, detections: response, local: true);
+
+    developer.log("Pick File Complete");
     return fullres;
   }
 
@@ -256,6 +271,7 @@ class MLPageState extends State<MLPage> {
                     Expanded(
                         child: ElevatedButton.icon(
                             onPressed: () {
+                              developer.log("Camera Button Pressed");
                               _pickfile().then((value) {
                                 if (value != null) {
                                   Navigator.push(

@@ -5,6 +5,7 @@ import 'dart:ui';
 import 'package:tflite_flutter_helper/tflite_flutter_helper.dart';
 import 'package:wild_life_mobile/ml/detection.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
+import 'dart:developer' as developer;
 
 Classifier? classifier;
 
@@ -80,6 +81,7 @@ class Classifier {
   //Process image and return predictions
   Future<List<Detection>> processImage(File image) async {
     //processes image
+    developer.log("Processing Image");
     TensorImage fixed = await _formatImage(image);
     List<Detection> predictions = [];
     if (_model == null) {
@@ -120,6 +122,7 @@ class Classifier {
             _labels[outClasses.getIntValue(i) + labelOffset]));
       }
     }
+    developer.log("Predictions Complete", name: "process.dart");
     return predictions;
   }
 }

@@ -1,6 +1,7 @@
 import 'package:wild_life_mobile/ml/detection.dart';
 import 'dart:io';
 import 'package:path/path.dart';
+import 'dart:developer' as developer;
 
 class GPS {
   final double latitude;

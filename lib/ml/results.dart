@@ -15,7 +15,6 @@ class UploadResultState extends StatelessWidget {
     return Row(
       children: [
         Flexible(
-            //Box for the image (TEMPORARY MOVE TO ANOTHE FILE)
             child: Container(
           height: 120,
           width: double.infinity,
