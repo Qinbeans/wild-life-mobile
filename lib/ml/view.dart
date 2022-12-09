@@ -147,7 +147,7 @@ class MLPageState extends State<MLPage> {
       //send upload request to server
     }
     File file = File(image.path);
-    final response = await classifier!.processImage(file);
+    final response = classifier!.predict(file);
     final fullres =
         FullResult(data: image.path, detections: response, local: true);
 
@@ -196,7 +196,7 @@ class MLPageState extends State<MLPage> {
     // }
 
     if (classifier != null) {
-      response = await classifier!.processImage(file);
+      response = classifier!.predict(file);
     } else {
       response = [];
     }
