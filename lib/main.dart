@@ -11,6 +11,9 @@ Future<void> main() async {
     if (!hasInternet) {
       classifier = Classifier('models/beta.tflite', 'assets/models/labels.txt');
       classifier!.load();
+    } else {
+      classifier = Classifier('models/beta.tflite', 'assets/models/labels.txt');
+      classifier!.load();
     }
   }).catchError((_) {
     classifier = Classifier('models/beta.tflite', 'assets/models/labels.txt');

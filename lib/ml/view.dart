@@ -26,6 +26,8 @@ var history = <Results>[];
 
 var widgetList = <Widget>[];
 
+var gpsList = <GPS>[];
+
 class MLPage extends StatefulWidget {
   const MLPage({Key? key}) : super(key: key);
 
@@ -66,6 +68,7 @@ class MLPageState extends State<MLPage> {
               ))),
     ];
     readJson().then((value) => {
+          //history = value,
           for (var i = 0; i < history.length; i++)
             {
               //grab the image from the path
@@ -180,6 +183,8 @@ class MLPageState extends State<MLPage> {
         location: GPS(latitude: lat, longitude: long),
         size: bytes.length,
         data: base64);
+    gpsList.add(uploadRequest!.location);
+    writeJsonGPS(gpsList);
     //send upload request
     //for now don't send the request and process locally
     if (isConnected) {
@@ -189,18 +194,11 @@ class MLPageState extends State<MLPage> {
     File file = File(image.path);
 
     final List<Detection> response;
-    // if (classifier != null) {
-    //   response = await classifier!.processImage(file);
-    // } else {
-    //   response = [];
-    // }
-
-    if (classifier != null) {
-      response = await classifier!.processImage(file);
-    } else {
-      response = [];
-    }
-
+    // response = await classifier!.processImage(file);
+    // // if (response == null) {
+    // //   return null;
+    // // }
+    response = [];
     final fullres =
         FullResult(data: image.path, detections: response, local: true);
 
@@ -277,8 +275,10 @@ class MLPageState extends State<MLPage> {
                         child: ElevatedButton.icon(
                             onPressed: () {
                               developer.log("Camera Button Pressed");
+                              developer.log(_locationData.toString());
                               _pickfile().then((value) {
                                 if (value != null) {
+                                  //writeJsonGPS(GPS(latitude: LocationData.latitude, longitude: longitude))
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(

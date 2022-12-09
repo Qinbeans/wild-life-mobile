@@ -11,6 +11,18 @@ class GPS {
     required this.latitude,
     required this.longitude,
   });
+
+  GPS fromJson(Map<String, dynamic> json) {
+    return GPS(
+      latitude: json['latitude'],
+      longitude: json['longitude'],
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'latitude': latitude,
+        'longitude': longitude,
+      };
 }
 
 //image data

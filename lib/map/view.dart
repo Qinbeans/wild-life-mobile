@@ -5,6 +5,7 @@ import 'package:wild_life_mobile/ml/io.dart';
 import 'package:location/location.dart';
 import 'package:flutter/services.dart';
 import 'package:location/location.dart';
+import 'dart:developer' as developer;
 
 List<Marker> markers = [];
 
@@ -19,55 +20,28 @@ class MapPage extends StatefulWidget {
 class MapPageState extends State<MapPage> {
   Location location = Location();
   LocationData? _locationData;
-  late bool _serviceEnabled;
-  late PermissionStatus _permissionGranted;
 
   @override
   void initState() {
     super.initState();
-    _checkLocationPermission();
+    // for (int i = 0; i < markers.length; i++) {
+    //   markers.removeAt(i);
+    // }
     markers.add(Marker(
         point: LatLng(38.7285, -121.8375),
-        builder: (ctx) {
-          return const Icon(Icons.location_on);
-        }));
-    // readJson().then((value) => {
-    //       for (var i = 0; i < history.length; i++)
-    //         {
-    //           //grab the image from the path
-    //           widgetList.add(UploadResultState(
-    //               confidence: history[i].confidence, imageName: imageName)),
-    //         }
-    //     });
-  }
-
-  void _getLocation() async {
-    try {
-      _locationData = await location.getLocation();
-    } on PlatformException catch (_) {
-      _locationData = LocationData.fromMap(<String, double>{
-        'latitude': 0.0,
-        'longitude': 0.0,
-      });
-    }
-  }
-
-  void _checkLocationPermission() async {
-    _serviceEnabled = await location.serviceEnabled();
-    if (!_serviceEnabled) {
-      _serviceEnabled = await location.requestService();
-      if (!_serviceEnabled) {
-        return;
-      }
-    }
-    _permissionGranted = await location.hasPermission();
-    if (_permissionGranted == PermissionStatus.denied) {
-      _permissionGranted = await location.requestPermission();
-      if (_permissionGranted != PermissionStatus.granted) {
-        return;
-      }
-    }
-    _getLocation();
+        builder: (context) => Container(
+              child: Icon(Icons.location_pin),
+            )));
+    readJsonGPS().then((value) => {
+          developer.log(value.toString()),
+          for (var i = 0; i < value.length; i++)
+            {
+              //grab the image from the path
+              markers.add(Marker(
+                  point: LatLng(91.0000, -121.8375),
+                  builder: (context) => const Icon(Icons.location_pin))),
+            }
+        });
   }
 
   @override
