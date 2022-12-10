@@ -28,7 +28,7 @@ class modalState extends State<modal> {
     _name = widget.result.getName();
     developer.log(_path);
     //widget.result.detections.length
-    for (var i = 0; i < 5; i++) {
+    for (var i = 0; i < widget.result.detections.length; i++) {
       // developer.log(i.toString());
       // developer.log(widget.result.detections[i].label);
       // developer.log(widget.result.detections[i].confidence.toString());
