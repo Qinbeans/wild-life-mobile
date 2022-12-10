@@ -27,18 +27,14 @@ class MapPageState extends State<MapPage> {
     // for (int i = 0; i < markers.length; i++) {
     //   markers.removeAt(i);
     // }
-    markers.add(Marker(
-        point: LatLng(38.7285, -121.8375),
-        builder: (context) => Container(
-              child: Icon(Icons.location_pin),
-            )));
     readJsonGPS().then((value) => {
-          developer.log(value.toString()),
+          developer.log("Reading JSON GPS IN MAP"),
           for (var i = 0; i < value.length; i++)
             {
               //grab the image from the path
+              developer.log(value[i].latitude.toString()),
               markers.add(Marker(
-                  point: LatLng(91.0000, -121.8375),
+                  point: LatLng(value[i].latitude, value[i].longitude),
                   builder: (context) => const Icon(Icons.location_pin))),
             }
         });
@@ -51,9 +47,6 @@ class MapPageState extends State<MapPage> {
       backgroundColor: const Color.fromARGB(255, 37, 37, 37),
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 37, 37, 37),
-        //leadingWidth: 20,
-        //centerTitle: true,
-        //title: const Text('Wildlife'),+
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -63,7 +56,6 @@ class MapPageState extends State<MapPage> {
         title: const Text("Map"),
         //titleTextStyle: TextStyle(fontSize: 30),
       ),
-      //////////Body//////////
       body: Center(
         child: SizedBox(
           width: double.infinity,
@@ -71,7 +63,7 @@ class MapPageState extends State<MapPage> {
           child: FlutterMap(
             options: MapOptions(
               center: LatLng(39.7285, -121.8375),
-              zoom: 7,
+              zoom: 14,
             ),
             children: [
               TileLayer(

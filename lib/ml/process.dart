@@ -124,12 +124,15 @@ class Classifier {
     final recognitions = <Detection>[];
     List<double> outputRes = outputLocations.getDoubleList();
     for (var i = 0; i < outputRes.length; i += 5 * clsNum) {
+      //developer.log("i: $i");
       if (outputRes[i + 4] < objConfTh) continue;
       var maxConf = outputRes.sublist(i + 5, i + 5 + clsNum - 1).reduce(max);
+      //developer.log(maxConf.toString());
       if (maxConf < clsConfTh) continue;
       var cls = outputRes.sublist(i + 5, i + 5 + clsNum - 1).indexOf(maxConf) %
           clsNum;
       //developer.log("cls: $cls");
+
       var box = Box(
         outputRes[i] * inputSize,
         outputRes[i + 1] * inputSize,
@@ -137,6 +140,7 @@ class Classifier {
         outputRes[i + 3] * inputSize,
       );
       //developer.log(maxConf.toString());
+
       recognitions.add(
         Detection(
           box,

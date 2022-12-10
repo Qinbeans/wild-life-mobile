@@ -67,7 +67,7 @@ class MLPageState extends State<MLPage> {
                 fontSize: 16,
               ))),
     ];
-    readJson().then((value) => {
+    readJson().then((history) => {
           //history = value,
           for (var i = 0; i < history.length; i++)
             {
@@ -285,7 +285,6 @@ class MLPageState extends State<MLPage> {
                               developer.log(_locationData.toString());
                               _pickfile().then((value) {
                                 if (value != null) {
-                                  //writeJsonGPS(GPS(latitude: LocationData.latitude, longitude: longitude))
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(

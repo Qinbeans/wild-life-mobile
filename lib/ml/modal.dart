@@ -28,41 +28,41 @@ class modalState extends State<modal> {
     _name = widget.result.getName();
     developer.log(_path);
     //widget.result.detections.length
-    for (var i = 0; i < widget.result.detections.length; i++) {
-      developer.log(i.toString());
-      developer.log(widget.result.detections[i].label);
-      developer.log(widget.result.detections[i].confidence.toString());
-      developer.log(widget.result.detections[i].box.toString());
-      if (widget.result.detections[i].confidence > 1) {
-        detectionWidgets.add(
-          Container(
-              height: 40,
-              width: double.infinity,
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: const Color.fromARGB(255, 58, 58, 58),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(widget.result.detections[i].label,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                      )),
-                  const Padding(padding: EdgeInsets.all(10)),
-                  Text(widget.result.detections[i].confidence.toString(),
-                      textDirection: TextDirection.rtl,
-                      style: const TextStyle(
-                        color: Color.fromARGB(255, 145, 142, 142),
-                        fontSize: 18,
-                      )),
-                ],
-              )),
-        );
-      }
+    for (var i = 0; i < 5; i++) {
+      // developer.log(i.toString());
+      // developer.log(widget.result.detections[i].label);
+      // developer.log(widget.result.detections[i].confidence.toString());
+      // developer.log(widget.result.detections[i].box.toString());
+      //if (widget.result.detections[i].confidence > 1) {
+      detectionWidgets.add(
+        Container(
+            height: 40,
+            width: double.infinity,
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: const Color.fromARGB(255, 58, 58, 58),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(widget.result.detections[i].label,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                    )),
+                const Padding(padding: EdgeInsets.all(10)),
+                Text(widget.result.detections[i].confidence.toString(),
+                    textDirection: TextDirection.rtl,
+                    style: const TextStyle(
+                      color: Color.fromARGB(255, 145, 142, 142),
+                      fontSize: 18,
+                    )),
+              ],
+            )),
+      );
     }
+    //}
   }
 
   @override
@@ -94,7 +94,6 @@ class modalState extends State<modal> {
                       //child: Image.file(File(_path)),
                     ),
                     const Padding(padding: EdgeInsets.all(5)),
-
                     const Text(
                       "Detections",
                       style: TextStyle(
@@ -103,11 +102,9 @@ class modalState extends State<modal> {
                       ),
                     ),
                     const Padding(padding: EdgeInsets.all(5)),
-                    //MAKE THIS LIST
                     Column(
                       children: detectionWidgets,
                     ),
-                    //MAKE THIS LIST
                     const Padding(padding: EdgeInsets.all(5)),
                     const Text(
                       "Upload",

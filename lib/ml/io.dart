@@ -3,9 +3,12 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart';
 import 'package:wild_life_mobile/model/image.dart';
+import 'dart:developer' as developer;
 
 //writes a list of objects into a json file
 void writeJson(List<Results> list) async {
+  developer.log("list", name: "writeJson", error: list.toString());
+  developer.log("Writing list to JSON");
   var json = jsonEncode(list);
   //write to file
   final directory = await getApplicationDocumentsDirectory();
@@ -14,7 +17,9 @@ void writeJson(List<Results> list) async {
 }
 
 void writeJsonGPS(List<GPS> list) async {
+  developer.log("Writing list to JSON GPS");
   var json = jsonEncode(list);
+  //developer.log(list.toString());
   //write to file
   final directory = await getApplicationDocumentsDirectory();
   final file = File(join(directory.path, 'gps.json'));
@@ -26,8 +31,13 @@ Future<List<GPS>> readJsonGPS() async {
   final file = File(join(directory.path, 'gps.json'));
   //check if file exists
   if (await file.exists()) {
+    developer.log("Reading list from JSON GPS");
     final json = file.readAsStringSync();
-    final list = jsonDecode(json);
+    final gps = GPS(latitude: 0.0, longitude: 0.0);
+    List<GPS> list = [];
+    list.addAll(List<GPS>.from(jsonDecode(json).map((x) => gps.fromJson(x))));
+    developer.log("Returning JSON GPS");
+
     return list;
   }
   return [];
