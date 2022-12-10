@@ -6,16 +6,6 @@ import 'package:wild_life_mobile/ml/process.dart';
 // 	override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray): Boolean {
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  //check for internet connection
-  // hasInternet().then((bool hasInternet) {
-  //   if (!hasInternet) {
-  //     classifier = Classifier('models/beta.tflite', 'assets/models/labels.txt');
-  //     classifier!.load();
-  //   }
-  // }).catchError((_) {
-  //   classifier = Classifier('models/beta.tflite', 'assets/models/labels.txt');
-  //   classifier!.load();
-  // });
   classifier = Classifier();
   classifier!.load('models/beta.tflite', 'models/labels.txt');
   runApp(const MyApp());

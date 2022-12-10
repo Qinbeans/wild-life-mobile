@@ -29,10 +29,10 @@ class modalState extends State<modal> {
     developer.log(_path);
     //widget.result.detections.length
     for (var i = 0; i < widget.result.detections.length; i++) {
-      developer.log(i.toString());
-      developer.log(widget.result.detections[i].label);
-      developer.log(widget.result.detections[i].confidence.toString());
-      developer.log(widget.result.detections[i].box.toString());
+      // developer.log(i.toString());
+      // developer.log(widget.result.detections[i].label);
+      // developer.log(widget.result.detections[i].confidence.toString());
+      // developer.log(widget.result.detections[i].box.toString());
       if (widget.result.detections[i].confidence > 1) {
         detectionWidgets.add(
           Container(
