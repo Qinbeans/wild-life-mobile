@@ -67,8 +67,9 @@ class MLPageState extends State<MLPage> {
                 fontSize: 16,
               ))),
     ];
+    developer.log("initState");
     readJson().then((history) => {
-          //history = value,
+          developer.log("history: " + history.toString()),
           for (var i = 0; i < history.length; i++)
             {
               //grab the image from the path
@@ -144,6 +145,8 @@ class MLPageState extends State<MLPage> {
         location: GPS(latitude: lat, longitude: long),
         size: bytes.length,
         data: base64);
+    writeJsonGPS(gpsList);
+
     //send upload request
     //for now don't send the request and process locally
     if (isConnected) {
@@ -194,11 +197,6 @@ class MLPageState extends State<MLPage> {
     File file = File(image.path);
 
     final List<Detection> response;
-    // if (classifier != null) {
-    //   response = await classifier!.processImage(file);
-    // } else {
-    //   response = [];
-    // }
 
     if (classifier != null) {
       response = classifier!.predict(file);
@@ -208,7 +206,10 @@ class MLPageState extends State<MLPage> {
 
     final fullres =
         FullResult(data: image.path, detections: response, local: true);
-
+    final List<Results> finalResult = [];
+    finalResult.add(Results(
+        data: image.path, confidence: response[0].confidence, local: true));
+    writeJson(finalResult);
     developer.log("Pick File Complete");
     return fullres;
   }
@@ -286,10 +287,11 @@ class MLPageState extends State<MLPage> {
                               _pickfile().then((value) {
                                 if (value != null) {
                                   Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              modal(result: value)));
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  modal(result: value)))
+                                      .then((value) => {setState(() {})});
                                 }
                               });
                             },

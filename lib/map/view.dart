@@ -31,8 +31,6 @@ class MapPageState extends State<MapPage> {
           developer.log("Reading JSON GPS IN MAP"),
           for (var i = 0; i < value.length; i++)
             {
-              //grab the image from the path
-              developer.log(value[i].latitude.toString()),
               markers.add(Marker(
                   point: LatLng(value[i].latitude, value[i].longitude),
                   builder: (context) => const Icon(Icons.location_pin))),

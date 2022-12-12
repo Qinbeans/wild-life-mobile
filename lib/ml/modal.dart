@@ -1,7 +1,9 @@
 // ignore_for_file: camel_case_types
 
+import 'dart:ffi';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:wild_life_mobile/ml/detection.dart';
@@ -31,9 +33,9 @@ class modalState extends State<modal> {
     for (var i = 0; i < widget.result.detections.length; i++) {
       // developer.log(i.toString());
       // developer.log(widget.result.detections[i].label);
-      // developer.log(widget.result.detections[i].confidence.toString());
+      //developer.log(widget.result.detections[i].confidence as String);
       // developer.log(widget.result.detections[i].box.toString());
-      //if (widget.result.detections[i].confidence > 1) {
+      //if (widget.result.detections[i].confidence > 0.90) {
       detectionWidgets.add(
         Container(
             height: 40,
@@ -72,12 +74,7 @@ class modalState extends State<modal> {
             backgroundColor: const Color.fromARGB(255, 37, 37, 37),
             appBar: AppBar(
               backgroundColor: const Color.fromARGB(255, 37, 37, 37),
-              leading: IconButton(
-                icon: const Icon(Icons.arrow_back),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
+
               title: const Text("Results"),
               //titleTextStyle: TextStyle(fontSize: 30),
             ),

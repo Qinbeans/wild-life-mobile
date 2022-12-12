@@ -49,8 +49,12 @@ Future<List<Results>> readJson() async {
   final file = File(join(directory.path, 'results.json'));
   //check if file exists
   if (await file.exists()) {
+    developer.log("Reading list from JSON");
     final json = file.readAsStringSync();
-    final list = jsonDecode(json);
+    final resulting = Results(data: '', confidence: 0.0, local: true);
+    List<Results> list = [];
+    list.addAll(
+        List<Results>.from(jsonDecode(json).map((x) => resulting.fromJson(x))));
     return list;
   }
   return [];
