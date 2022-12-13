@@ -47,37 +47,8 @@ class MLPageState extends State<MLPage> {
   void initState() {
     super.initState();
     _checkLocationPermission();
-    String imageName;
-    widgetList = [
-      Column(),
-      const Text("Previous Uploads",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 20,
-          )),
-      // const Padding(padding: EdgeInsets.all(20)),
-      TextButton(
-          style: TextButton.styleFrom(
-            textStyle: const TextStyle(fontSize: 20),
-          ),
-          onPressed: (() => deleteJson()),
-          child: const Text("Clear",
-              style: TextStyle(
-                color: Colors.green,
-                fontSize: 16,
-              ))),
-    ];
+    ouputData();
     developer.log("initState");
-    readJson().then((history) => {
-          developer.log("history: " + history.toString()),
-          for (var i = 0; i < history.length; i++)
-            {
-              //grab the image from the path
-              imageName = basename(File(history[i].data).path),
-              widgetList.add(UploadResultState(
-                  confidence: history[i].confidence, imageName: imageName)),
-            }
-        });
   }
 
   @override
@@ -89,6 +60,39 @@ class MLPageState extends State<MLPage> {
     setState((() {
       _checkLocationPermission();
     }));
+  }
+
+  Future ouputData() async {
+    String fullPath;
+    String imageName;
+    String dblToString;
+    double confidence;
+    widgetList = [
+      Column(),
+    ];
+    readJson().then((history) => {
+          developer.log(history.length.toString()),
+          for (var i = 0; i < history.length; i++)
+            {
+              confidence = history[i].confidence * 100,
+              dblToString = confidence.toStringAsPrecision(3),
+              //grab the image from the path
+              fullPath = history[i].data,
+              imageName = basename(history[i].data),
+              widgetList.add(
+                UploadResultState(
+                  confidence: history[i].confidence,
+                  imageName: imageName,
+                  convertedConfidence: dblToString,
+                  fullpath: fullPath,
+                ),
+              ),
+              widgetList.add(const Padding(padding: EdgeInsets.all(3.0)))
+            }
+        });
+    setState(() {
+      widgetList;
+    });
   }
 
   void _getLocation() async {
@@ -122,6 +126,7 @@ class MLPageState extends State<MLPage> {
 
   Future<FullResult?> _captureImage() async {
     _refreshLocation(); //update location
+    developer.log("Pick File Accessed");
     final imagePicker = ImagePicker();
     final XFile? image =
         await imagePicker.pickImage(source: ImageSource.camera);
@@ -145,8 +150,9 @@ class MLPageState extends State<MLPage> {
         location: GPS(latitude: lat, longitude: long),
         size: bytes.length,
         data: base64);
-    writeJsonGPS(gpsList);
-
+    gpsList.add(uploadRequest!.location);
+    //writeJsonGPS(gpsList);
+    writeJsonGPS(GPS(latitude: lat, longitude: long));
     //send upload request
     //for now don't send the request and process locally
     if (isConnected) {
@@ -159,6 +165,9 @@ class MLPageState extends State<MLPage> {
     } else {
       response = [];
     }
+    writeJson(Results(
+        data: image.path, confidence: response[0].confidence, local: true));
+    developer.log("Pick File Complete");
     var fullres =
         FullResult(data: image.path, detections: response, local: true);
     return fullres;
@@ -191,7 +200,8 @@ class MLPageState extends State<MLPage> {
         size: bytes.length,
         data: base64);
     gpsList.add(uploadRequest!.location);
-    writeJsonGPS(gpsList);
+    //writeJsonGPS(gpsList);
+    writeJsonGPS(GPS(latitude: lat, longitude: long));
     //send upload request
     //for now don't send the request and process locally
     if (isConnected) {
@@ -213,104 +223,147 @@ class MLPageState extends State<MLPage> {
     final List<Results> finalResult = [];
     finalResult.add(Results(
         data: image.path, confidence: response[0].confidence, local: true));
-    writeJson(finalResult);
+    //writeJson(finalResult);
+    writeJson(Results(
+        data: image.path, confidence: response[0].confidence, local: true));
     developer.log("Pick File Complete");
+    setState(() {
+      ouputData();
+    });
     return fullres;
   }
 
   @override
   Widget build(BuildContext context) {
+    //ouputData();
+    developer.log("Build Accessed");
     return MaterialApp(
         home: Scaffold(
-            backgroundColor: const Color.fromARGB(255, 37, 37, 37),
-            appBar: AppBar(
-              backgroundColor: const Color.fromARGB(255, 37, 37, 37),
-              //leadingWidth: 20,
-              centerTitle: true,
-              //title: const Text('Wildlife'),
-              title: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    FaIcon(FontAwesomeIcons.leaf, color: Colors.green),
-                    Text(" Wildlife"),
-                  ]),
-              actions: [
-                IconButton(
-                  icon: const Icon(Icons.map),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const MapPage()),
-                    );
-                  },
-                ),
-              ],
-            ),
-            //titleTextStyle: TextStyle(fontSize: 30),
-            //////////Body//////////
-            body: Container(
-              padding: const EdgeInsets.all(20), //padding for the whole page
-              child: Column(children: [
-                Row(children: const [
-                  Text("New Upload",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                      )),
-                ]),
-                Row(
-                  children: [
-                    Expanded(
-                        child: ElevatedButton(
-                      onPressed: () {
-                        _captureImage().then((value) {
-                          if (value != null) {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        modal(result: value)));
-                          }
-                        });
-                      },
-                      style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                              const Color.fromARGB(255, 58, 58, 58))),
-                      child: const Icon(
-                        FontAwesomeIcons.camera,
-                        color: Colors.white,
-                      ),
+      backgroundColor: const Color.fromARGB(255, 37, 37, 37),
+      appBar: AppBar(
+        backgroundColor: const Color.fromARGB(255, 37, 37, 37),
+        //leadingWidth: 20,
+        centerTitle: true,
+        //title: const Text('Wildlife'),
+        title:
+            Row(mainAxisAlignment: MainAxisAlignment.center, children: const [
+          FaIcon(FontAwesomeIcons.leaf, color: Colors.green),
+          Text(" Wildlife"),
+        ]),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.map),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const MapPage()),
+              );
+            },
+          ),
+        ],
+      ),
+      //titleTextStyle: TextStyle(fontSize: 30),
+      //////////Body//////////
+      body: ListView(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(20), //padding for the whole page
+            child: Column(children: [
+              Row(children: const [
+                Text("New Upload",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
                     )),
-                    const Padding(padding: EdgeInsets.all(10)),
-                    //Makes button fill row
-                    Expanded(
-                        child: ElevatedButton.icon(
-                            onPressed: () {
-                              developer.log("Camera Button Pressed");
-                              developer.log(_locationData.toString());
-                              _pickfile().then((value) {
-                                if (value != null) {
-                                  Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  modal(result: value)))
-                                      .then((value) => {setState(() {})});
-                                }
-                              });
-                            },
-                            icon: const Icon(FontAwesomeIcons.image,
-                                color: Colors.white),
-                            label: const Text("Upload",
-                                style: TextStyle(color: Colors.white)),
-                            style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all<
-                                        Color>(
-                                    const Color.fromARGB(255, 58, 58, 58))))),
-                  ],
-                ),
-                Row(children: widgetList),
               ]),
-            )));
+              Row(
+                children: [
+                  Expanded(
+                      child: ElevatedButton(
+                    onPressed: () {
+                      _captureImage().then((value) {
+                        if (value != null) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Modal(result: value)));
+                          // setState(() {
+                          //   ouputData();
+                          // });
+                          setState(() {});
+                        }
+                      });
+                    },
+                    style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            const Color.fromARGB(255, 58, 58, 58))),
+                    child: const Icon(
+                      FontAwesomeIcons.camera,
+                      color: Colors.white,
+                    ),
+                  )),
+                  const Padding(padding: EdgeInsets.all(10)),
+                  //Makes button fill row
+                  Expanded(
+                      child: ElevatedButton.icon(
+                          onPressed: () {
+                            developer.log("Camera Button Pressed");
+                            developer.log(_locationData.toString());
+                            _pickfile().then((value) {
+                              if (value != null) {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            Modal(result: value)));
+                                setState(() {
+                                  ouputData();
+                                  widgetList;
+                                });
+                              }
+                            });
+                          },
+                          icon: const Icon(FontAwesomeIcons.image,
+                              color: Colors.white),
+                          label: const Text("Upload",
+                              style: TextStyle(color: Colors.white)),
+                          style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                  const Color.fromARGB(255, 58, 58, 58))))),
+                ],
+              ),
+              Row(children: [
+                const Text("Previous Uploads",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                    )),
+                // const Padding(padding: EdgeInsets.all(20)),
+                TextButton(
+                    style: TextButton.styleFrom(
+                      textStyle: const TextStyle(fontSize: 20),
+                    ),
+                    onPressed: () => {
+                          deleteJson(),
+                          setState(() {
+                            widgetList = [
+                              Column(),
+                            ];
+                          }),
+                          deleteJsonGPS()
+                        },
+                    //onPressed: null,
+                    child: const Text("Clear",
+                        style: TextStyle(
+                          color: Colors.green,
+                          fontSize: 16,
+                        ))),
+              ]),
+              Column(children: widgetList),
+            ]),
+          ),
+        ],
+      ),
+    ));
   }
 }

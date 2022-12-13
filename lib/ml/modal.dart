@@ -9,16 +9,17 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:wild_life_mobile/ml/detection.dart';
 import 'package:wild_life_mobile/model/image.dart';
 import 'dart:developer' as developer;
+import 'package:wild_life_mobile/ml/view.dart';
 
-class modal extends StatefulWidget {
+class Modal extends StatefulWidget {
   final FullResult result;
-  const modal({Key? key, required this.result}) : super(key: key);
+  const Modal({Key? key, required this.result}) : super(key: key);
 
   @override
-  modalState createState() => modalState();
+  ModalState createState() => ModalState();
 }
 
-class modalState extends State<modal> {
+class ModalState extends State<Modal> {
   String _path = '';
   String _name = '';
   List<Widget> detectionWidgets = [];
@@ -63,88 +64,87 @@ class modalState extends State<modal> {
               ],
             )),
       );
+      detectionWidgets.add(const Padding(padding: EdgeInsets.all(3)));
     }
     //}
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        home: Scaffold(
-            backgroundColor: const Color.fromARGB(255, 37, 37, 37),
-            appBar: AppBar(
-              backgroundColor: const Color.fromARGB(255, 37, 37, 37),
-
-              title: const Text("Results"),
-              //titleTextStyle: TextStyle(fontSize: 30),
-            ),
-            //////////Body/////////
-            body: Container(
-                padding: const EdgeInsets.all(10), //padding for the whole page
-                child: ListView(
+    return (Scaffold(
+        backgroundColor: const Color.fromARGB(255, 37, 37, 37),
+        appBar: AppBar(
+          backgroundColor: const Color.fromARGB(255, 37, 37, 37),
+          title: const Text("Results"),
+          //titleTextStyle: TextStyle(fontSize: 30),
+        ),
+        //////////Body/////////
+        body: Container(
+            padding: const EdgeInsets.all(10), //padding for the whole page
+            child: ListView(
+              shrinkWrap: true,
+              //crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ListView(
                   shrinkWrap: true,
-                  //crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ListView(
-                      shrinkWrap: true,
-                      children: [Image.file(File(_path))],
-                      //child: Image.file(File(_path)),
-                    ),
-                    const Padding(padding: EdgeInsets.all(5)),
-                    const Text(
-                      "Detections",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                      ),
-                    ),
-                    const Padding(padding: EdgeInsets.all(5)),
-                    Column(
-                      children: detectionWidgets,
-                    ),
-                    const Padding(padding: EdgeInsets.all(5)),
-                    const Text(
-                      "Upload",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                      ),
-                    ),
-                    const Padding(padding: EdgeInsets.all(5)),
-                    Container(
-                      height: 100,
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: const Color.fromARGB(255, 58, 58, 58),
-                      ),
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: const [
-                              Text(
-                                "name",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                ),
-                              ),
-                              Text(
-                                //_name,
-                                "CHANGE",
-                                style: TextStyle(
-                                  color: Color.fromARGB(255, 145, 142, 142),
-                                  fontSize: 18,
-                                ),
-                              ),
-                            ],
+                  children: [Image.file(File(_path))],
+                  //child: Image.file(File(_path)),
+                ),
+                const Padding(padding: EdgeInsets.all(5)),
+                const Text(
+                  "Detections",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                  ),
+                ),
+                const Padding(padding: EdgeInsets.all(5)),
+                Column(
+                  children: detectionWidgets,
+                ),
+                const Padding(padding: EdgeInsets.all(5)),
+                const Text(
+                  "Upload",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                  ),
+                ),
+                const Padding(padding: EdgeInsets.all(5)),
+                Container(
+                  height: 100,
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: const Color.fromARGB(255, 58, 58, 58),
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: const [
+                          Text(
+                            "name",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                            ),
+                          ),
+                          Text(
+                            //_name,
+                            "CHANGE",
+                            style: TextStyle(
+                              color: Color.fromARGB(255, 145, 142, 142),
+                              fontSize: 18,
+                            ),
                           ),
                         ],
                       ),
-                    )
-                  ],
-                ))));
+                    ],
+                  ),
+                )
+              ],
+            ))));
   }
 }

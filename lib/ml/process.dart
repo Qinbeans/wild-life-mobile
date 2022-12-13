@@ -52,7 +52,7 @@ class Processor {
         imageWidth: imageSize,
         confThreshold: threshold);
     if (response.type == "error") {
-      developer.log("Error: ${response.message}");
+      //developer.log("Error: ${response.message}");
       return [];
     }
     //get detections
