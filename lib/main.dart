@@ -6,10 +6,8 @@ import 'package:wild_life_mobile/ml/process.dart';
 // 	override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray): Boolean {
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  classifier = Processor(
-      modelDir: 'assets/models/beta.tflite',
-      labelDir: 'assets/models/labels.txt');
-  classifier!.loadModel();
+  classifier = Classifier();
+  classifier!.load('models/beta.tflite', 'models/labels.txt');
   runApp(const MyApp());
 }
 

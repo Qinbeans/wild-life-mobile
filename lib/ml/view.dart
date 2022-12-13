@@ -161,7 +161,7 @@ class MLPageState extends State<MLPage> {
     File file = File(image.path);
     List<Detection> response = [];
     if (classifier != null) {
-      response = await classifier!.forward(file);
+      response = classifier!.predict(file);
     } else {
       response = [];
     }
@@ -213,7 +213,7 @@ class MLPageState extends State<MLPage> {
     final List<Detection> response;
 
     if (classifier != null) {
-      response = await classifier!.forward(file);
+      response = classifier!.predict(file);
     } else {
       response = [];
     }

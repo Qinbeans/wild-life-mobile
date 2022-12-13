@@ -28,14 +28,14 @@ packages:
       name: camera
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.10.0+4"
+    version: "0.9.8+1"
   camera_android:
     dependency: transitive
     description:
       name: camera_android
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.10.1"
+    version: "0.9.8+3"
   camera_avfoundation:
     dependency: transitive
     description:
@@ -56,7 +56,7 @@ packages:
       name: camera_web
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.3.1"
+    version: "0.2.1+6"
   characters:
     dependency: transitive
     description:
@@ -151,13 +151,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_vision:
-    dependency: "direct main"
-    description:
-      name: flutter_vision
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.1"
   flutter_web_plugins:
     dependency: transitive
     description: flutter
@@ -476,6 +469,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.4.12"
+  tflite_flutter:
+    dependency: "direct main"
+    description:
+      name: tflite_flutter
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.9.0"
+  tflite_flutter_helper:
+    dependency: "direct main"
+    description:
+      name: tflite_flutter_helper
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.3.1"
   tuple:
     dependency: transitive
     description:
