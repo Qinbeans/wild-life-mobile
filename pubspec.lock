@@ -22,6 +22,41 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.0"
+  camera:
+    dependency: transitive
+    description:
+      name: camera
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.9.8+1"
+  camera_android:
+    dependency: transitive
+    description:
+      name: camera_android
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.9.8+3"
+  camera_avfoundation:
+    dependency: transitive
+    description:
+      name: camera_avfoundation
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.9.9"
+  camera_platform_interface:
+    dependency: transitive
+    description:
+      name: camera_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.3.2"
+  camera_web:
+    dependency: transitive
+    description:
+      name: camera_web
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.1+6"
   characters:
     dependency: transitive
     description:
@@ -116,13 +151,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_vision:
-    dependency: "direct main"
-    description:
-      name: flutter_vision
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.1"
   flutter_web_plugins:
     dependency: transitive
     description: flutter
@@ -380,6 +408,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.0"
+  quiver:
+    dependency: transitive
+    description:
+      name: quiver
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.1.0"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -406,6 +441,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.0"
+  stream_transform:
+    dependency: transitive
+    description:
+      name: stream_transform
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.1.0"
   string_scanner:
     dependency: transitive
     description:
@@ -427,6 +469,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.4.12"
+  tflite_flutter:
+    dependency: "direct main"
+    description:
+      name: tflite_flutter
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.9.0"
+  tflite_flutter_helper:
+    dependency: "direct main"
+    description:
+      name: tflite_flutter_helper
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.3.1"
   tuple:
     dependency: transitive
     description:
