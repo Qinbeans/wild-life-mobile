@@ -1,21 +1,28 @@
 // ignore_for_file: camel_case_types
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'dart:io';
 
 //Just need confidence and image path. Look at results object in image.dart
 class UploadResultState extends StatelessWidget {
   final double confidence;
   final String imageName;
+  final String convertedConfidence;
+  final String fullpath;
 
   const UploadResultState(
-      {Key? key, required this.confidence, required this.imageName})
+      {Key? key,
+      required this.confidence,
+      required this.imageName,
+      required this.convertedConfidence,
+      required this.fullpath})
       : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
         Flexible(
-            //Box for the image (TEMPORARY MOVE TO ANOTHE FILE)
             child: Container(
           height: 120,
           width: double.infinity,
@@ -27,27 +34,25 @@ class UploadResultState extends StatelessWidget {
           child: Row(
             children: [
               //Image
+
               Container(
-                height: 100,
-                width: 120,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: const Color.fromARGB(255, 58, 58, 58),
-                ),
-                child: const Icon(
-                  FontAwesomeIcons.image,
-                  color: Colors.white,
-                ),
-              ),
+                  height: 100,
+                  width: 120,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: const Color.fromARGB(255, 58, 58, 58),
+                  ),
+                  child: Image(image: FileImage(File(fullpath)))),
               const Padding(padding: EdgeInsets.all(10)),
               //Text
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(imageName,
+                  Text("..." + imageName.substring(imageName.length - 10),
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 15,
+                        overflow: TextOverflow.ellipsis,
                       )),
                   const Padding(padding: EdgeInsets.all(3)),
                   RichText(
@@ -78,7 +83,7 @@ class UploadResultState extends StatelessWidget {
                         )),
                   ])),
                   const Padding(padding: EdgeInsets.all(3)),
-                  Text("$confidence%  Confidence",
+                  Text("$convertedConfidence%  Confidence",
                       style: const TextStyle(
                         color: Color.fromARGB(255, 175, 173, 173),
                         fontSize: 15,
@@ -87,7 +92,7 @@ class UploadResultState extends StatelessWidget {
               ),
             ],
           ),
-        ))
+        )),
       ],
     );
   }

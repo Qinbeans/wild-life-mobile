@@ -1,3 +1,8 @@
+import 'package:wild_life_mobile/ml/detection.dart';
+import 'dart:io';
+import 'package:path/path.dart';
+import 'dart:developer' as developer;
+
 class GPS {
   final double latitude;
   final double longitude;
@@ -6,6 +11,18 @@ class GPS {
     required this.latitude,
     required this.longitude,
   });
+
+  GPS fromJson(Map<String, dynamic> json) {
+    return GPS(
+      latitude: json['latitude'],
+      longitude: json['longitude'],
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'latitude': latitude,
+        'longitude': longitude,
+      };
 }
 
 //image data
@@ -46,6 +63,44 @@ class UploadResponse {
     required this.message,
     this.data,
   });
+}
+
+class FullResult {
+  String data = '';
+  List<Detection> detections = [];
+  bool local = false;
+
+  FullResult({
+    required this.data,
+    required this.detections,
+    required this.local,
+  });
+
+  String getName() {
+    return basename(File(data).path);
+  }
+
+  Results? toResults() {
+    //find the highest confidence detection
+    Detection? detection;
+    for (var d in detections) {
+      if (detection == null) {
+        detection = d;
+      } else {
+        if (d.confidence > detection.confidence) {
+          detection = d;
+        }
+      }
+    }
+    if (detection == null) {
+      return null;
+    }
+    return Results(
+      data: data,
+      confidence: detection.confidence,
+      local: local,
+    );
+  }
 }
 
 class Results {

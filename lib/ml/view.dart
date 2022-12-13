@@ -5,24 +5,28 @@
 //take in an image
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:path/path.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:location/location.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:wild_life_mobile/ml/detection.dart';
 import 'package:wild_life_mobile/ml/modal.dart';
+import 'package:wild_life_mobile/ml/process.dart';
 import 'package:wild_life_mobile/model/image.dart';
 import 'package:wild_life_mobile/map/view.dart';
 import 'package:wild_life_mobile/ml/results.dart';
 import 'package:wild_life_mobile/ml/io.dart';
+import 'dart:developer' as developer;
 
 var isConnected = false;
 
 var history = <Results>[];
 
 var widgetList = <Widget>[];
+
+var gpsList = <GPS>[];
 
 class MLPage extends StatefulWidget {
   const MLPage({Key? key}) : super(key: key);
@@ -43,35 +47,8 @@ class MLPageState extends State<MLPage> {
   void initState() {
     super.initState();
     _checkLocationPermission();
-    String imageName;
-    widgetList = [
-      Column(),
-      const Text("Previous Uploads",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 20,
-          )),
-      // const Padding(padding: EdgeInsets.all(20)),
-      TextButton(
-          style: TextButton.styleFrom(
-            textStyle: const TextStyle(fontSize: 20),
-          ),
-          onPressed: null,
-          child: const Text("Clear",
-              style: TextStyle(
-                color: Colors.green,
-                fontSize: 16,
-              ))),
-    ];
-    readJson().then((value) => {
-          for (var i = 0; i < history.length; i++)
-            {
-              //grab the image from the path
-              imageName = basename(File(history[i].data).path),
-              widgetList.add(UploadResultState(
-                  confidence: history[i].confidence, imageName: imageName)),
-            }
-        });
+    WidgetsBinding.instance.addPostFrameCallback((_) => ouputData());
+    developer.log("initState");
   }
 
   @override
@@ -83,6 +60,38 @@ class MLPageState extends State<MLPage> {
     setState((() {
       _checkLocationPermission();
     }));
+  }
+
+  Future ouputData() async {
+    String fullPath;
+    String imageName;
+    String dblToString;
+    double confidence;
+    widgetList.clear();
+    widgetList = [
+      Column(),
+    ];
+    readJson().then((history) => {
+          developer.log(history.length.toString()),
+          for (var i = 0; i < history.length; i++)
+            {
+              confidence = history[i].confidence * 100,
+              dblToString = confidence.toStringAsPrecision(3),
+              //grab the image from the path
+              fullPath = history[i].data,
+              imageName = basename(history[i].data),
+              widgetList.add(
+                UploadResultState(
+                  confidence: history[i].confidence,
+                  imageName: imageName,
+                  convertedConfidence: dblToString,
+                  fullpath: fullPath,
+                ),
+              ),
+              widgetList.add(const Padding(padding: EdgeInsets.all(3.0)))
+            }
+        });
+    // setState(() {});
   }
 
   void _getLocation() async {
@@ -114,13 +123,13 @@ class MLPageState extends State<MLPage> {
     _getLocation();
   }
 
-  void _captureImage() async {
-    _refreshLocation(); //update location
+  Future<FullResult?> _captureImage() async {
+    developer.log("Pick File Accessed");
     final imagePicker = ImagePicker();
     final XFile? image =
         await imagePicker.pickImage(source: ImageSource.camera);
     if (image == null) {
-      return;
+      return null;
     }
     //convert image to bytes
     final bytes = await image.readAsBytes();
@@ -139,22 +148,46 @@ class MLPageState extends State<MLPage> {
         location: GPS(latitude: lat, longitude: long),
         size: bytes.length,
         data: base64);
+    gpsList.add(uploadRequest!.location);
+    //writeJsonGPS(gpsList);
+    writeJsonGPS(GPS(latitude: lat, longitude: long));
     //send upload request
     //for now don't send the request and process locally
     if (isConnected) {
       //send upload request to server
-    } else {
-      //send upload request to local model
     }
+
+    File file = File(image.path);
+
+    final List<Detection> response;
+
+    if (classifier != null) {
+      response = classifier!.predict(file);
+    } else {
+      response = [];
+    }
+
+    final fullres =
+        FullResult(data: image.path, detections: response, local: true);
+    final List<Results> finalResult = [];
+    finalResult.add(Results(
+        data: image.path, confidence: response[0].confidence, local: true));
+    //writeJson(finalResult);
+    writeJson(Results(
+        data: image.path, confidence: response[0].confidence, local: true));
+    developer.log("Pick File Complete");
+    setState(() {});
+    return fullres;
   }
 
-  void _pickfile() async {
-    _refreshLocation(); //update location
+  Future<FullResult?> _pickfile() async {
+    //_refreshLocation(); //update location
+    developer.log("Pick File Accessed");
     final imagePicker = ImagePicker();
     final XFile? image =
         await imagePicker.pickImage(source: ImageSource.gallery);
     if (image == null) {
-      return;
+      return null;
     }
     //convert image to bytes
     final bytes = await image.readAsBytes();
@@ -173,85 +206,167 @@ class MLPageState extends State<MLPage> {
         location: GPS(latitude: lat, longitude: long),
         size: bytes.length,
         data: base64);
+    gpsList.add(uploadRequest!.location);
+    //writeJsonGPS(gpsList);
+    writeJsonGPS(GPS(latitude: lat, longitude: long));
     //send upload request
     //for now don't send the request and process locally
     if (isConnected) {
       //send upload request to server
-    } else {
-      //send upload request to local model
     }
+
+    File file = File(image.path);
+
+    final List<Detection> response;
+
+    if (classifier != null) {
+      response = classifier!.predict(file);
+    } else {
+      response = [];
+    }
+
+    final fullres =
+        FullResult(data: image.path, detections: response, local: true);
+    final List<Results> finalResult = [];
+    finalResult.add(Results(
+        data: image.path, confidence: response[0].confidence, local: true));
+    //writeJson(finalResult);
+    writeJson(Results(
+        data: image.path, confidence: response[0].confidence, local: true));
+    developer.log("Pick File Complete");
+    setState(() {});
+    return fullres;
   }
 
   @override
   Widget build(BuildContext context) {
+    _refreshLocation();
+    //ouputData();
+    developer.log("Size of list: ${widgetList.length}");
+    developer.log("Build Accessed");
     return MaterialApp(
         home: Scaffold(
-            backgroundColor: const Color.fromARGB(255, 37, 37, 37),
-            appBar: AppBar(
-              backgroundColor: const Color.fromARGB(255, 37, 37, 37),
-              //leadingWidth: 20,
-              centerTitle: true,
-              //title: const Text('Wildlife'),
-              title: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    FaIcon(FontAwesomeIcons.leaf, color: Colors.green),
-                    Text(" Wildlife"),
-                  ]),
-              actions: [
-                IconButton(
-                  icon: const Icon(Icons.map),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const modal()),
-                    );
-                  },
-                ),
-              ],
-            ),
-            //titleTextStyle: TextStyle(fontSize: 30),
-            //////////Body//////////
-            body: Container(
-              padding: const EdgeInsets.all(20), //padding for the whole page
-              child: Column(children: [
-                Row(children: const [
-                  Text("New Upload",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                      )),
-                ]),
-                Row(
-                  children: [
-                    Expanded(
-                        child: ElevatedButton(
-                      onPressed: _captureImage,
-                      style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                              const Color.fromARGB(255, 58, 58, 58))),
-                      child: const Icon(
-                        FontAwesomeIcons.camera,
-                        color: Colors.white,
-                      ),
+      backgroundColor: const Color.fromARGB(255, 37, 37, 37),
+      appBar: AppBar(
+        backgroundColor: const Color.fromARGB(255, 37, 37, 37),
+        //leadingWidth: 20,
+        centerTitle: true,
+        //title: const Text('Wildlife'),
+        title:
+            Row(mainAxisAlignment: MainAxisAlignment.center, children: const [
+          FaIcon(FontAwesomeIcons.leaf, color: Colors.green),
+          Text(" Wildlife"),
+        ]),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.map),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const MapPage()),
+              );
+            },
+          ),
+        ],
+      ),
+      //titleTextStyle: TextStyle(fontSize: 30),
+      //////////Body//////////
+      body: ListView(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(20), //padding for the whole page
+            child: Column(children: [
+              Row(children: const [
+                Text("New Upload",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
                     )),
-                    const Padding(padding: EdgeInsets.all(10)),
-                    //Makes button fill row
-                    Expanded(
-                        child: ElevatedButton.icon(
-                            onPressed: _pickfile,
-                            icon: const Icon(FontAwesomeIcons.image,
-                                color: Colors.white),
-                            label: const Text("Upload",
-                                style: TextStyle(color: Colors.white)),
-                            style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all<
-                                        Color>(
-                                    const Color.fromARGB(255, 58, 58, 58))))),
-                  ],
-                ),
-                Row(children: widgetList),
               ]),
-            )));
+              Row(
+                children: [
+                  Expanded(
+                      child: ElevatedButton(
+                    onPressed: () {
+                      _captureImage().then((value) {
+                        if (value != null) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Modal(result: value)));
+                          setState(() {
+                            ouputData();
+                          });
+                        }
+                      });
+                    },
+                    style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            const Color.fromARGB(255, 58, 58, 58))),
+                    child: const Icon(
+                      FontAwesomeIcons.camera,
+                      color: Colors.white,
+                    ),
+                  )),
+                  const Padding(padding: EdgeInsets.all(10)),
+                  //Makes button fill row
+                  Expanded(
+                      child: ElevatedButton.icon(
+                          onPressed: () {
+                            developer.log("Camera Button Pressed");
+                            developer.log(_locationData.toString());
+                            _pickfile().then((value) {
+                              if (value != null) {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            Modal(result: value)));
+                                setState(() {
+                                  ouputData();
+                                });
+                              }
+                            });
+                          },
+                          icon: const Icon(FontAwesomeIcons.image,
+                              color: Colors.white),
+                          label: const Text("Upload",
+                              style: TextStyle(color: Colors.white)),
+                          style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                  const Color.fromARGB(255, 58, 58, 58))))),
+                ],
+              ),
+              Row(children: [
+                const Text("Previous Uploads",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                    )),
+                // const Padding(padding: EdgeInsets.all(20)),
+                TextButton(
+                    style: TextButton.styleFrom(
+                      textStyle: const TextStyle(fontSize: 20),
+                    ),
+                    onPressed: () => {
+                          deleteJson(),
+                          setState(() {
+                            widgetList.clear();
+                          }),
+                          deleteJsonGPS()
+                        },
+                    //onPressed: null,
+                    child: const Text("Clear",
+                        style: TextStyle(
+                          color: Colors.green,
+                          fontSize: 16,
+                        ))),
+              ]),
+              Column(children: widgetList),
+            ]),
+          ),
+        ],
+      ),
+    ));
   }
 }

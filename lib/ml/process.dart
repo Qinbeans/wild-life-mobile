@@ -1,125 +1,152 @@
-//processes incoming images
-import 'dart:io';
+// Followed https://github.com/syu-kwsk/flutter_yolov5_app/blob/main/lib/data/model/classifier.dart
+// Adapted to fit our model and code base
+
 import 'dart:math';
-import 'dart:ui';
-import 'package:tflite_flutter_helper/tflite_flutter_helper.dart';
-import 'package:wild_life_mobile/ml/detection.dart';
+import 'dart:developer' as developer;
+import 'dart:io';
 import 'package:tflite_flutter/tflite_flutter.dart';
+import 'package:tflite_flutter_helper/tflite_flutter_helper.dart';
+
+import 'package:wild_life_mobile/ml/detection.dart';
 
 Classifier? classifier;
 
 class Classifier {
-  Interpreter? _model;
+  late Interpreter? _interpreter;
+  Interpreter? get interpreter => _interpreter;
+
+  /// image size into interpreter
+  static const int inputSize = 512;
+
+  ImageProcessor? imageProcessor;
+  late List<List<int>> _outputShapes;
+  late List<TfLiteType> _outputTypes;
   late List<String> _labels;
 
-  late String _modelPath;
-  late String _labelPath;
+  static const double objConfTh = 0.80;
+  static const double clsConfTh = 0.80;
 
-  // Shape
-  late List<List<int>> _outputShapes;
+  late int spacing;
+  late int clsNum;
 
-  /// Types of output tensors
-  late List<TfLiteType> _outputTypes;
-
-  final int _size = 256;
-  final double _scoreThreshold =
-      0.7; //how willing are we to accept a prediction
-  final int _threadCount = 4;
-  final int _numResults = 10;
-
-  Classifier(String modelPath, String labelPath) {
-    _modelPath = modelPath;
-    _labelPath = labelPath;
-    _outputShapes = [];
-    _outputTypes = [];
-    _labels = [];
-  }
-
-  void dispose() {
-    if (_model != null) {
-      _model!.close();
-    }
-  }
-
-  void _loadModel() async {
-    if (_model != null) return;
-    _model = await Interpreter.fromAsset(_modelPath,
-        options: InterpreterOptions()..threads = _threadCount);
-    var outputTensors = _model!.getOutputTensors();
-    for (var tensor in outputTensors) {
-      _outputShapes.add(tensor.shape);
-      _outputTypes.add(tensor.type);
-    }
-  }
-
-  void _loadLabels() async {
-    if (_model == null) return;
-    _labels = await FileUtil.loadLabels(_labelPath);
-  }
-
-  void load() async {
-    _loadModel();
-    _loadLabels();
-  }
-
-  //Format image for processing
-  Future<TensorImage> _formatImage(File image) async {
-    //resize image to fit 256x256
-    TensorImage tensorImage = TensorImage.fromFile(image);
-    int baseScaleSize = max(tensorImage.height, tensorImage.width);
-    ImageProcessor imageProcessor = ImageProcessorBuilder()
-        // Padding the image
-        .add(ResizeWithCropOrPadOp(baseScaleSize, baseScaleSize))
-        // Resizing to input size
-        .add(ResizeOp(_size, _size, ResizeMethod.BILINEAR))
-        .build();
-    tensorImage = imageProcessor.process(tensorImage);
-    return tensorImage;
-  }
-
-  //Process image and return predictions
-  Future<List<Detection>> processImage(File image) async {
-    //processes image
-    TensorImage fixed = await _formatImage(image);
-    List<Detection> predictions = [];
-    if (_model == null) {
-      return predictions;
-    }
-    TensorBuffer outLocations = TensorBufferFloat(_outputShapes[0]);
-    TensorBuffer outClasses = TensorBufferFloat(_outputShapes[1]);
-    TensorBuffer outScores = TensorBufferFloat(_outputShapes[2]);
-    TensorBuffer outNumLocations = TensorBufferFloat(_outputShapes[3]);
-    List<Object> objects = [fixed.buffer];
-    Map<int, Object> outputs = {
-      0: outLocations.buffer,
-      1: outClasses.buffer,
-      2: outScores.buffer,
-      3: outNumLocations.buffer
-    };
-    _model!.runForMultipleInputs(objects, outputs);
-    //organize predictions
-    int numPredictions = min(_numResults, outNumLocations.getIntValue(0));
-    int labelOffset = 1;
-
-    List<Rect> locations = BoundingBoxUtils.convert(
-      tensor: outLocations,
-      valueIndex: [1, 0, 3, 2],
-      boundingBoxAxis: 2,
-      boundingBoxType: BoundingBoxType.BOUNDARIES,
-      coordinateType: CoordinateType.RATIO,
-      height: _size,
-      width: _size,
-    );
-    for (int i = 0; i < numPredictions; i++) {
-      double score = outScores.getDoubleValue(i);
-      if (score > _scoreThreshold) {
-        predictions.add(Detection(
-            Box(locations[i].left, locations[i].top, locations[i].right,
-                locations[i].bottom),
-            score,
-            _labels[outClasses.getIntValue(i) + labelOffset]));
+  /// load interpreter
+  Future<void> loadModel(String modelFileName) async {
+    try {
+      _interpreter = await Interpreter.fromAsset(
+        modelFileName,
+        options: InterpreterOptions()..threads = 4,
+      );
+      final outputTensors = _interpreter!.getOutputTensors();
+      _outputShapes = [];
+      _outputTypes = [];
+      for (final tensor in outputTensors) {
+        _outputShapes.add(tensor.shape);
+        _outputTypes.add(tensor.type);
       }
+      //[0][1][2] = [1, 16320, 9]
+      spacing = _outputShapes[0][2] - 1;
+    } on Exception catch (e) {
+      developer.log(e.toString());
     }
-    return predictions;
+  }
+
+  void loadLabels(String labelFileName) async {
+    try {
+      _labels = await FileUtil.loadLabels("assets/$labelFileName");
+      clsNum = _labels.length;
+    } catch (e) {
+      developer.log(e.toString());
+    }
+  }
+
+  void load(String modelFileName, String labelFileName) async {
+    await loadModel(modelFileName);
+    loadLabels(labelFileName);
+  }
+
+  void printOutputShapes() {
+    for (var i = 0; i < _outputShapes.length; i++) {
+      developer.log("Shape: ${_outputShapes[i].toString()}");
+    }
+  }
+
+  /// image pre process
+  TensorImage getProcessedImage(TensorImage inputImage) {
+    final padSize = max(inputImage.height, inputImage.width);
+
+    imageProcessor ??= ImageProcessorBuilder()
+        .add(
+          ResizeWithCropOrPadOp(
+            padSize,
+            padSize,
+          ),
+        )
+        .add(
+          ResizeOp(
+            inputSize,
+            inputSize,
+            ResizeMethod.BILINEAR,
+          ),
+        )
+        .build();
+    return imageProcessor!.process(inputImage);
+  }
+
+  List<Detection> predict(File image) {
+    printOutputShapes();
+    if (_interpreter == null) {
+      return [];
+    }
+
+    var inputImage = TensorImage.fromFile(image);
+    inputImage = getProcessedImage(inputImage);
+
+    ///  normalize from zero to one
+    List<double> normalizedInputImage = [];
+    for (var pixel in inputImage.tensorBuffer.getDoubleList()) {
+      normalizedInputImage.add(pixel / 255.0);
+    }
+    var normalizedTensorBuffer = TensorBuffer.createDynamic(TfLiteType.float32);
+    normalizedTensorBuffer
+        .loadList(normalizedInputImage, shape: [inputSize, inputSize, 3]);
+
+    final inputs = [normalizedTensorBuffer.buffer];
+
+    /// tensor for results of inference
+    final outputLocations = TensorBufferFloat(_outputShapes[0]);
+    final outputs = {
+      0: outputLocations.buffer,
+    };
+
+    _interpreter!.runForMultipleInputs(inputs, outputs);
+
+    /// make recognition
+    final recognitions = <Detection>[];
+    List<double> outputRes = outputLocations.getDoubleList();
+    for (var i = 0; i < outputRes.length; i += 5 * clsNum) {
+      //8 bit int to double maintaining bits
+      var conf = outputRes[i + 4];
+      // developer.log("conf: $conf");
+      if (conf < objConfTh || conf > 1) continue;
+      var maxConf = outputRes.sublist(i + 5, i + 5 + clsNum - 1).reduce(max);
+      //developer.log(maxConf.toString());
+      if (maxConf < clsConfTh) continue;
+      var cls = outputRes.sublist(i + 5, i + 5 + clsNum - 1).indexOf(maxConf) %
+          clsNum;
+      var box = Box(
+        outputRes[i] * inputSize,
+        outputRes[i + 1] * inputSize,
+        outputRes[i + 2] * inputSize,
+        outputRes[i + 3] * inputSize,
+      );
+      recognitions.add(
+        Detection(
+          box,
+          conf,
+          _labels[cls],
+        ),
+      );
+    }
+    return recognitions;
   }
 }
