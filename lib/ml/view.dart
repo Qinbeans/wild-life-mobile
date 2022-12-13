@@ -158,26 +158,18 @@ class MLPageState extends State<MLPage> {
     if (isConnected) {
       //send upload request to server
     }
-
     File file = File(image.path);
-
-    final List<Detection> response;
-
+    List<Detection> response = [];
     if (classifier != null) {
-      response = classifier!.predict(file);
+      response = await classifier!.forward(file);
     } else {
       response = [];
     }
-
-    final fullres =
-        FullResult(data: image.path, detections: response, local: true);
-    final List<Results> finalResult = [];
-    finalResult.add(Results(
-        data: image.path, confidence: response[0].confidence, local: true));
-    //writeJson(finalResult);
     writeJson(Results(
         data: image.path, confidence: response[0].confidence, local: true));
     developer.log("Pick File Complete");
+    var fullres =
+        FullResult(data: image.path, detections: response, local: true);
     return fullres;
   }
 
@@ -221,7 +213,7 @@ class MLPageState extends State<MLPage> {
     final List<Detection> response;
 
     if (classifier != null) {
-      response = classifier!.predict(file);
+      response = await classifier!.forward(file);
     } else {
       response = [];
     }
@@ -324,9 +316,10 @@ class MLPageState extends State<MLPage> {
                                     MaterialPageRoute(
                                         builder: (context) =>
                                             Modal(result: value)));
-                                // setState(() {
-                                //   ouputData();
-                                // });
+                                setState(() {
+                                  ouputData();
+                                  widgetList;
+                                });
                               }
                             });
                           },

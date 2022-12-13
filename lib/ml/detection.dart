@@ -33,4 +33,12 @@ class Detection {
   String toString() {
     return 'Detection: [box: $_box, confidence: $_confidence, label: $_label]';
   }
+
+  static Detection fromMap(Map<String, dynamic> map) {
+    final x = map['box']['x1'];
+    final y = map['box']['y1'];
+    final w = map['box']['x2'] - x;
+    final h = map['box']['y2'] - y;
+    return Detection(Box(x, y, w, h), map['confidence'], map['label']);
+  }
 }
