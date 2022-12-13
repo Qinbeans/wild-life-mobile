@@ -1,5 +1,6 @@
 import 'dart:developer' as developer;
 
+import 'package:flutter/foundation.dart';
 import 'package:wild_life_mobile/ml/detection.dart';
 
 import 'package:image/image.dart';
@@ -17,6 +18,7 @@ class Processor {
   final imageSize = 512;
   //constructor
   Processor({required this.modelDir, required this.labelDir});
+
   void dispose() async {
     await classifier.closeYoloModel();
   }
@@ -35,25 +37,17 @@ class Processor {
     }
   }
 
-  //reformat image to fit 512x512, if the image is smaller, pad it
-  Image formatImage(File image) {
+  List<Uint8List> formatImage(File image) {
     var input = decodeImage(image.readAsBytesSync())!;
-    //resize image
-    input = copyResize(input, width: imageSize, height: imageSize);
-    //pad image
-    input = copyInto(Image(imageSize, imageSize), input,
-        dstX: 0, dstY: 0, blend: false);
-    return input;
+    return [input.getBytes()];
   }
 
   //detect objects
   Future<List<Detection>> forward(File input) async {
     final image = formatImage(input);
-    //convert into byte list
-    final bytesList = [image.getBytes()];
     //format image
     final response = await classifier.yoloOnFrame(
-        bytesList: bytesList,
+        bytesList: image,
         imageHeight: imageSize,
         imageWidth: imageSize,
         confThreshold: threshold);
