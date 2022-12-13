@@ -7,7 +7,7 @@ import 'package:wild_life_mobile/ml/process.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   classifier = Classifier();
-  classifier!.load('models/beta.tflite', 'models/labels.txt');
+  classifier!.load("models/beta.tflite", "models/labels.txt");
   runApp(const MyApp());
 }
 
