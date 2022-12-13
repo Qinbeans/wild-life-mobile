@@ -2,10 +2,12 @@
 
 import 'dart:ffi';
 import 'dart:io';
-
+import 'package:path/path.dart';
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:wild_life_mobile/ml/detection.dart';
 import 'package:wild_life_mobile/model/image.dart';
 import 'dart:developer' as developer;
@@ -22,6 +24,8 @@ class Modal extends StatefulWidget {
 class ModalState extends State<Modal> {
   String _path = '';
   String _name = '';
+  String _nameShortened = '';
+  double _size = 0;
   List<Widget> detectionWidgets = [];
 
   @override
@@ -29,44 +33,54 @@ class ModalState extends State<Modal> {
     super.initState();
     _path = widget.result.data;
     _name = widget.result.getName();
-    developer.log(_path);
+    _nameShortened = "...${_name.substring(_name.length - 15)}";
+    dirsize();
     //widget.result.detections.length
-    for (var i = 0; i < widget.result.detections.length; i++) {
+    for (var i = 0; i < 10; i++) {
       // developer.log(i.toString());
       // developer.log(widget.result.detections[i].label);
       //developer.log(widget.result.detections[i].confidence as String);
       // developer.log(widget.result.detections[i].box.toString());
-      //if (widget.result.detections[i].confidence > 0.90) {
-      detectionWidgets.add(
-        Container(
-            height: 40,
-            width: double.infinity,
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: const Color.fromARGB(255, 58, 58, 58),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(widget.result.detections[i].label,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                    )),
-                const Padding(padding: EdgeInsets.all(10)),
-                Text(widget.result.detections[i].confidence.toString(),
-                    textDirection: TextDirection.rtl,
-                    style: const TextStyle(
-                      color: Color.fromARGB(255, 145, 142, 142),
-                      fontSize: 18,
-                    )),
-              ],
-            )),
-      );
-      detectionWidgets.add(const Padding(padding: EdgeInsets.all(3)));
+      if (widget.result.detections[i].confidence > 0.90) {
+        detectionWidgets.add(
+          Container(
+              height: 40,
+              width: double.infinity,
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: const Color.fromARGB(255, 58, 58, 58),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(widget.result.detections[i].label,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                      )),
+                  const Padding(padding: EdgeInsets.all(10)),
+                  Text(widget.result.detections[i].confidence.toString(),
+                      textDirection: TextDirection.rtl,
+                      style: const TextStyle(
+                        color: Color.fromARGB(255, 145, 142, 142),
+                        fontSize: 18,
+                      )),
+                ],
+              )),
+        );
+        detectionWidgets.add(const Padding(padding: EdgeInsets.all(3)));
+      }
     }
-    //}
+  }
+
+  void dirsize() async {
+    final directory = await getApplicationDocumentsDirectory();
+    final file = File(join(directory.path, 'results.json'));
+    _size = file.lengthSync() / 100000;
+    setState(() {
+      _size = _size;
+    });
   }
 
   @override
@@ -112,7 +126,7 @@ class ModalState extends State<Modal> {
                 ),
                 const Padding(padding: EdgeInsets.all(5)),
                 Container(
-                  height: 100,
+                  height: 75,
                   width: double.infinity,
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
@@ -123,8 +137,8 @@ class ModalState extends State<Modal> {
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: const [
-                          Text(
+                        children: [
+                          const Text(
                             "name",
                             style: TextStyle(
                               color: Colors.white,
@@ -132,15 +146,34 @@ class ModalState extends State<Modal> {
                             ),
                           ),
                           Text(
-                            //_name,
-                            "CHANGE",
-                            style: TextStyle(
+                            _nameShortened,
+                            style: const TextStyle(
                               color: Color.fromARGB(255, 145, 142, 142),
                               fontSize: 18,
                             ),
                           ),
                         ],
                       ),
+                      const Padding(padding: EdgeInsets.all(5)),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            "size",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                            ),
+                          ),
+                          Text(
+                            "$_size MB",
+                            style: const TextStyle(
+                              color: Color.fromARGB(255, 145, 142, 142),
+                              fontSize: 18,
+                            ),
+                          ),
+                        ],
+                      )
                     ],
                   ),
                 )

@@ -47,7 +47,7 @@ class MLPageState extends State<MLPage> {
   void initState() {
     super.initState();
     _checkLocationPermission();
-    ouputData();
+    WidgetsBinding.instance.addPostFrameCallback((_) => ouputData());
     developer.log("initState");
   }
 
@@ -67,6 +67,7 @@ class MLPageState extends State<MLPage> {
     String imageName;
     String dblToString;
     double confidence;
+    widgetList.clear();
     widgetList = [
       Column(),
     ];
@@ -90,9 +91,7 @@ class MLPageState extends State<MLPage> {
               widgetList.add(const Padding(padding: EdgeInsets.all(3.0)))
             }
         });
-    setState(() {
-      widgetList;
-    });
+    // setState(() {});
   }
 
   void _getLocation() async {
@@ -125,7 +124,6 @@ class MLPageState extends State<MLPage> {
   }
 
   Future<FullResult?> _captureImage() async {
-    _refreshLocation(); //update location
     developer.log("Pick File Accessed");
     final imagePicker = ImagePicker();
     final XFile? image =
@@ -158,23 +156,32 @@ class MLPageState extends State<MLPage> {
     if (isConnected) {
       //send upload request to server
     }
+
     File file = File(image.path);
-    List<Detection> response = [];
+
+    final List<Detection> response;
+
     if (classifier != null) {
       response = classifier!.predict(file);
     } else {
       response = [];
     }
+
+    final fullres =
+        FullResult(data: image.path, detections: response, local: true);
+    final List<Results> finalResult = [];
+    finalResult.add(Results(
+        data: image.path, confidence: response[0].confidence, local: true));
+    //writeJson(finalResult);
     writeJson(Results(
         data: image.path, confidence: response[0].confidence, local: true));
     developer.log("Pick File Complete");
-    var fullres =
-        FullResult(data: image.path, detections: response, local: true);
+    setState(() {});
     return fullres;
   }
 
   Future<FullResult?> _pickfile() async {
-    _refreshLocation(); //update location
+    //_refreshLocation(); //update location
     developer.log("Pick File Accessed");
     final imagePicker = ImagePicker();
     final XFile? image =
@@ -227,15 +234,15 @@ class MLPageState extends State<MLPage> {
     writeJson(Results(
         data: image.path, confidence: response[0].confidence, local: true));
     developer.log("Pick File Complete");
-    setState(() {
-      ouputData();
-    });
+    setState(() {});
     return fullres;
   }
 
   @override
   Widget build(BuildContext context) {
+    _refreshLocation();
     //ouputData();
+    developer.log("Size of list: ${widgetList.length}");
     developer.log("Build Accessed");
     return MaterialApp(
         home: Scaffold(
@@ -287,10 +294,9 @@ class MLPageState extends State<MLPage> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => Modal(result: value)));
-                          // setState(() {
-                          //   ouputData();
-                          // });
-                          setState(() {});
+                          setState(() {
+                            ouputData();
+                          });
                         }
                       });
                     },
@@ -318,7 +324,6 @@ class MLPageState extends State<MLPage> {
                                             Modal(result: value)));
                                 setState(() {
                                   ouputData();
-                                  widgetList;
                                 });
                               }
                             });
@@ -346,9 +351,7 @@ class MLPageState extends State<MLPage> {
                     onPressed: () => {
                           deleteJson(),
                           setState(() {
-                            widgetList = [
-                              Column(),
-                            ];
+                            widgetList.clear();
                           }),
                           deleteJsonGPS()
                         },
