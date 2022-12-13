@@ -63,6 +63,7 @@ class MapPageState extends State<MapPage> {
 
   void _getLocation() async {
     try {
+      setState(() {});
       _locationData = await location.getLocation();
     } on PlatformException catch (_) {
       _locationData = LocationData.fromMap(<String, double>{
@@ -76,6 +77,7 @@ class MapPageState extends State<MapPage> {
   Widget build(BuildContext context) {
     _getLocation();
     _locatonWork();
+    setState(() {});
     return MaterialApp(
         home: Scaffold(
       backgroundColor: const Color.fromARGB(255, 37, 37, 37),
