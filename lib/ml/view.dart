@@ -47,7 +47,7 @@ class MLPageState extends State<MLPage> {
   void initState() {
     super.initState();
     _checkLocationPermission();
-    WidgetsBinding.instance.addPostFrameCallback((_) => ouputData());
+    ouputData();
     developer.log("initState");
   }
 
@@ -62,7 +62,7 @@ class MLPageState extends State<MLPage> {
     }));
   }
 
-  Future ouputData() async {
+  void ouputData() {
     String fullPath;
     String imageName;
     String dblToString;
@@ -88,7 +88,9 @@ class MLPageState extends State<MLPage> {
                   fullpath: fullPath,
                 ),
               ),
-              widgetList.add(const Padding(padding: EdgeInsets.all(3.0)))
+              setState(() {
+                widgetList.add(const Padding(padding: EdgeInsets.all(3.0)));
+              })
             }
         });
     // setState(() {});
@@ -176,6 +178,7 @@ class MLPageState extends State<MLPage> {
     writeJson(Results(
         data: image.path, confidence: response[0].confidence, local: true));
     developer.log("Pick File Complete");
+    ouputData();
     setState(() {});
     return fullres;
   }
@@ -234,6 +237,7 @@ class MLPageState extends State<MLPage> {
     writeJson(Results(
         data: image.path, confidence: response[0].confidence, local: true));
     developer.log("Pick File Complete");
+    ouputData();
     setState(() {});
     return fullres;
   }
