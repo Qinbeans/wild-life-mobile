@@ -73,13 +73,13 @@ class MLPageState extends State<MLPage> {
     ];
     readJson().then((history) => {
           developer.log(history.length.toString()),
-          for (var i = 0; i < history.length; i++)
-            {
-              confidence = history[i].confidence * 100,
-              dblToString = confidence.toStringAsPrecision(3),
+          setState(() {
+            for (var i = 0; i < history.length; i++) {
+              confidence = history[i].confidence * 100;
+              dblToString = confidence.toStringAsPrecision(3);
               //grab the image from the path
-              fullPath = history[i].data,
-              imageName = basename(history[i].data),
+              fullPath = history[i].data;
+              imageName = basename(history[i].data);
               widgetList.add(
                 UploadResultState(
                   confidence: history[i].confidence,
@@ -87,13 +87,12 @@ class MLPageState extends State<MLPage> {
                   convertedConfidence: dblToString,
                   fullpath: fullPath,
                 ),
-              ),
-              setState(() {
-                widgetList.add(const Padding(padding: EdgeInsets.all(3.0)));
-              })
+              );
+              widgetList.add(const Padding(padding: EdgeInsets.all(3.0)));
             }
+          }),
         });
-    // setState(() {});
+    setState(() {});
   }
 
   void _getLocation() async {
@@ -178,7 +177,7 @@ class MLPageState extends State<MLPage> {
     writeJson(Results(
         data: image.path, confidence: response[0].confidence, local: true));
     developer.log("Pick File Complete");
-    ouputData();
+    //ouputData();
     setState(() {});
     return fullres;
   }
@@ -237,7 +236,7 @@ class MLPageState extends State<MLPage> {
     writeJson(Results(
         data: image.path, confidence: response[0].confidence, local: true));
     developer.log("Pick File Complete");
-    ouputData();
+    //ouputData();
     setState(() {});
     return fullres;
   }
@@ -246,6 +245,7 @@ class MLPageState extends State<MLPage> {
   Widget build(BuildContext context) {
     _refreshLocation();
     //ouputData();
+    setState(() {});
     developer.log("Size of list: ${widgetList.length}");
     developer.log("Build Accessed");
     return MaterialApp(
